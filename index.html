@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4A5D1E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lançamento">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}</style>
+<title>Lançamento CSL</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Planejamento de lançamento HALO/HAHO pelo método do Curso de Salto Livre, com ventos NOAA GFS do ciclo mais recente.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Saira+Stencil+One&display=swap">
+<style>
+/* Layout: coluna única tipo prancheta de joelho; cabeçalho fixo, barra de abas no rodapé, cartões por etapa do memento */
+:root{
+  --bg:#E8EBE1; --surface:#F7F8F3; --surface-2:#DEE2D4; --ink:#1A1E15; --muted:#596050; --line:#C3C9B6;
+  --accent:#4A5D1E; --accent-ink:#F3F7E8; --amber:#9A5A00;
+  --ok:#2C6A2C; --warn:#8A5D00; --danger:#B1261D; --warn-bg:#F6E9C8; --danger-bg:#F6D9D5;
+  --terrain:#56664A; --terrain-2:#4C5B41;
+  --va:#E0262B; --ql:#FFFFFF; --mg:#000000; --disp:#F5C400; --arr:#1F7AE0; --apoio:#7B3FB5;
+  --f-display:'Saira Stencil One','Barlow Condensed',Impact,'Arial Narrow',sans-serif;
+  --f-label:'Barlow Condensed','Arial Narrow','Roboto Condensed',sans-serif;
+  --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --r:10px; --tab-h:62px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10130D; --surface:#181C14; --surface-2:#222A1C; --ink:#E3E8D8; --muted:#9AA18B; --line:#323A2A;
+  --accent:#A6C064; --accent-ink:#141A08; --amber:#F0A53C;
+  --ok:#7CC27C; --warn:#E7B54B; --danger:#FF7466; --warn-bg:#3A2F12; --danger-bg:#3F1B17;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#10130D; --surface:#181C14; --surface-2:#222A1C; --ink:#E3E8D8; --muted:#9AA18B; --line:#323A2A;
+  --accent:#A6C064; --accent-ink:#141A08; --amber:#F0A53C;
+  --ok:#7CC27C; --warn:#E7B54B; --danger:#FF7466; --warn-bg:#3A2F12; --danger-bg:#3F1B17;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-text-size-adjust:100%;
+  padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom,0px) + 12px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Cabeçalho */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.brand{display:flex;flex-direction:column;min-width:0;flex:1}
+.brand b{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.04em;line-height:1;color:var(--accent)}
+.brand span{font-family:var(--f-label);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.cyc{font-family:var(--f-mono);font-size:11px;line-height:1.25;text-align:right;color:var(--muted);white-space:nowrap}
+.cyc strong{display:block;color:var(--ink);font-size:12px}
+.banner{background:var(--warn-bg);color:var(--ink);border-bottom:1px solid var(--line)}
+.banner .wrap{display:flex;gap:10px;align-items:center;padding-block:8px;font-size:14px}
+.banner button{margin-left:auto}
+
+/* Seções */
+main{padding-top:14px}
+.view{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-label);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h2.sec{font-family:var(--f-label);font-weight:700;font-size:22px;letter-spacing:.02em;margin:2px 0 0;text-wrap:balance}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{margin:0;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.card h3 .step{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:1px 6px;letter-spacing:0}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.span2{grid-column:1/-1}
+@media (min-width:560px){.span2{grid-column:auto}.grid2:has(.span2){grid-template-columns:repeat(3,1fr)}}
+.fld{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fld label{font-family:var(--f-label);font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fld input,.fld select{height:44px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:0 10px;font-size:16px;width:100%;min-width:0}
+.fld input.num{font-family:var(--f-mono);font-size:15.5px}
+.fld input[readonly]{background:var(--surface-2);border-style:dashed}
+.fld .err{color:var(--danger);font-size:12.5px}
+.fld input.bad{border-color:var(--danger)}
+.readout{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:var(--muted)}
+.readout b{font-family:var(--f-mono);font-weight:700;color:var(--ink)}
+details.adv{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+details.adv summary{padding:14px;cursor:pointer;font-family:var(--f-label);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:15px;list-style:none;display:flex;justify-content:space-between}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::after{content:"+";font-family:var(--f-mono)}
+details.adv[open] summary::after{content:"−"}
+details.adv .inner{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--f-label);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px;text-decoration:none;color:var(--ink)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);min-height:54px;font-size:16px;width:100%}
+.btn.small{min-height:36px;padding:0 10px;font-size:12.5px}
+.btn[disabled]{opacity:.55;cursor:default}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}
+.spin{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
+
+.msg{border-radius:8px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.msg.warn{background:var(--warn-bg);border:1px solid var(--line);border:1px solid color-mix(in srgb,var(--warn) 45%,transparent)}
+.msg.err{background:var(--danger-bg);border:1px solid var(--line);border:1px solid color-mix(in srgb,var(--danger) 45%,transparent)}
+.msg.info{background:var(--surface-2)}
+.msg b{font-family:var(--f-label);letter-spacing:.06em;text-transform:uppercase}
+
+/* Fonte dos dados */
+.src{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13.5px}
+.src dt{font-family:var(--f-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.src dd{margin:0;font-family:var(--f-mono);font-size:13px;min-width:0;overflow-wrap:anywhere}
+
+/* Tabela de ventos */
+.tblwrap{overflow-x:auto;margin:0 -14px;padding:0 14px}
+table.wx{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:13.5px}
+table.wx th{font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.wx td{padding:4px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+table.wx td.p{font-family:var(--f-mono);font-weight:700}
+table.wx td small{display:block;font-family:var(--f-mono);font-weight:500;font-size:10.5px;color:var(--muted)}
+table.wx td.alt{font-family:var(--f-mono)}
+table.wx input{width:50px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-family:var(--f-mono);font-size:14px;text-align:right;padding:0 6px}
+table.wx tr.use-VA td{background:rgba(224,38,43,.11);background:color-mix(in srgb,var(--va) 11%,transparent)}
+table.wx tr.use-QL td{background:rgba(200,130,20,.13);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+table.wx tr.ground td{color:var(--muted)}
+table.wx tr.excl td{opacity:.55}
+table.wx tr.excl td.p{text-decoration:line-through}
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:26px;padding:0 8px;border-radius:13px;font-family:var(--f-label);font-weight:700;font-size:12.5px;letter-spacing:.06em;border:1px solid var(--line);background:transparent;color:var(--muted)}
+button.chip{cursor:pointer}
+.chip.VA{background:var(--va);border-color:var(--va);color:#fff}
+.chip.QL{background:#fff;border-color:#1A1E15;color:#1A1E15}
+.chip.SOLO{border-style:dashed}
+.chip.EXC{text-decoration:line-through}
+.flag{color:var(--danger);font-weight:700;margin-left:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:10px;font-family:var(--f-mono);font-size:13px}
+
+/* Resultado */
+.entries{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.entry{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.entry .k{font-family:var(--f-label);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--muted)}
+.entry .v{font-family:var(--f-mono);font-weight:700;font-size:30px;line-height:1.1;letter-spacing:-.01em}
+.entry .v small{font-size:13px;font-weight:500;color:var(--muted);margin-left:3px;letter-spacing:0}
+.entry .s{font-size:12.5px;color:var(--muted)}
+.entry.wide{grid-column:1/-1}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:6px 12px;align-items:baseline;font-size:14px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--f-mono);font-weight:700;text-align:right;overflow-wrap:anywhere}
+.sub{font-family:var(--f-label);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:-4px}
+.big{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.big .n{font-family:var(--f-mono);font-weight:700;font-size:34px;line-height:1}
+.big .n small{font-size:14px;color:var(--muted);font-weight:500}
+.formula{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);background:var(--surface-2);border-radius:6px;padding:8px 10px;line-height:1.55;overflow-wrap:anywhere}
+.swatch{display:inline-block;width:26px;height:5px;border-radius:3px;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.layers{display:flex;flex-wrap:wrap;gap:6px}
+.layers span{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.pslist{display:flex;flex-direction:column;gap:0}
+.ps{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.ps:first-child{border-top:0;padding-top:0}
+.ps .t{font-family:var(--f-label);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:15px}
+.ps .t em{font-style:normal;color:var(--muted);font-weight:600;letter-spacing:.02em;text-transform:none;font-family:var(--f-body);font-size:13px;margin-left:6px}
+.ps .c{font-family:var(--f-mono);font-size:14px;grid-column:1;overflow-wrap:anywhere}
+.ps .b{grid-row:1/span 2;grid-column:2;display:flex;gap:6px}
+.empty{text-align:center;padding:30px 14px;color:var(--muted)}
+.empty b{display:block;font-family:var(--f-label);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);font-size:16px;margin-bottom:6px}
+
+/* Mapa */
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{min-height:40px;border:0;background:var(--surface);font-family:var(--f-label);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:13px;cursor:pointer;border-left:1px solid var(--line);color:var(--muted)}
+.seg button:first-child{border-left:0}
+.seg.two{grid-template-columns:1fr 1fr;flex:1;max-width:260px}
+.modelbar{display:flex;align-items:center;gap:12px}
+.mlabel{font-family:var(--f-label);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+table.wx tr.interp input{font-style:italic;border-style:dashed}
+.itag{font-family:var(--f-label);font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--muted);border:1px dashed var(--line);border-radius:3px;padding:0 3px;margin-left:4px;vertical-align:2px}
+.layers span.int{border-style:dashed}
+table.cmp{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+table.cmp th,table.cmp td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.cmp thead th{font-family:var(--f-label);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+table.cmp tbody th{text-align:left;font-weight:500;color:var(--muted)}
+table.cmp td{font-family:var(--f-mono);font-weight:700}
+table.cmp tr.dv td:last-child{color:var(--danger)}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;min-height:36px}
+.check input{width:20px;height:20px;accent-color:var(--accent)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.mapbox{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--terrain);aspect-ratio:1/1;max-width:100%;position:relative}
+.mapbox svg{display:block;width:100%;height:100%}
+#sat{aspect-ratio:1/1;max-width:100%;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--terrain-2)}
+.leaflet-container{font-family:var(--f-body)}
+.ltip{background:rgba(10,12,8,.82);color:#fff;border:0;border-radius:4px;font-family:var(--f-label);font-weight:700;letter-spacing:.04em;font-size:12px;padding:2px 6px;box-shadow:none}
+.ltip::before{display:none}
+
+/* Abas */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:var(--tab-h)}
+.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-family:var(--f-label);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;position:relative}
+.tabs button svg{width:22px;height:22px}
+.tabs button[aria-selected="true"]{color:var(--accent)}
+.tabs button[aria-selected="true"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
+.dot{position:absolute;top:10px;right:calc(50% - 20px);width:8px;height:8px;border-radius:50%;background:var(--danger)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tab-h) + env(safe-area-inset-bottom,0px) + 14px);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:40;max-width:calc(100% - 32px)}
+.foot{font-size:12px;color:var(--muted);padding:6px 0 4px;line-height:1.5}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane > svg,.leaflet-pane > canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0;} .leaflet-container{overflow:hidden;} .leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none;} .leaflet-tile::selection{background:transparent;} .leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast;} .leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0;} .leaflet-marker-icon,.leaflet-marker-shadow{display:block;} .leaflet-container .leaflet-overlay-pane svg{max-width:none !important;max-height:none !important;} .leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer,.leaflet-container .leaflet-tile{max-width:none !important;max-height:none !important;width:auto;padding:0;} .leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter;} .leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y;} .leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom;} .leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none;} .leaflet-container{-webkit-tap-highlight-color:transparent;} .leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,0.4);} .leaflet-tile{filter:inherit;visibility:hidden;} .leaflet-tile-loaded{visibility:inherit;} .leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800;} .leaflet-overlay-pane svg{-moz-user-select:none;} .leaflet-pane{z-index:400;} .leaflet-tile-pane{z-index:200;} .leaflet-overlay-pane{z-index:400;} .leaflet-shadow-pane{z-index:500;} .leaflet-marker-pane{z-index:600;} .leaflet-tooltip-pane{z-index:650;} .leaflet-popup-pane{z-index:700;} .leaflet-map-pane canvas{z-index:100;} .leaflet-map-pane svg{z-index:200;} .leaflet-vml-shape{width:1px;height:1px;} .leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto;} .leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none;} .leaflet-top{top:0;} .leaflet-right{right:0;} .leaflet-bottom{bottom:0;} .leaflet-left{left:0;} .leaflet-control{float:left;clear:both;} .leaflet-right .leaflet-control{float:right;} .leaflet-top .leaflet-control{margin-top:10px;} .leaflet-bottom .leaflet-control{margin-bottom:10px;} .leaflet-left .leaflet-control{margin-left:10px;} .leaflet-right .leaflet-control{margin-right:10px;} .leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity 0.2s linear;-moz-transition:opacity 0.2s linear;transition:opacity 0.2s linear;} .leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1;} .leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0;} svg.leaflet-zoom-animated{will-change:transform;} .leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform 0.25s cubic-bezier(0,0,0.25,1);-moz-transition:-moz-transform 0.25s cubic-bezier(0,0,0.25,1);transition:transform 0.25s cubic-bezier(0,0,0.25,1);} .leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none;} .leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden;} .leaflet-interactive{cursor:pointer;} .leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab;} .leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair;} .leaflet-popup-pane,.leaflet-control{cursor:auto;} .leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing;} .leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane > svg path,.leaflet-tile-container{pointer-events:none;} .leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane > svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto;} .leaflet-container{background:#ddd;outline-offset:1px;} .leaflet-container a{color:#0078A8;} .leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,0.5);} .leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:0.75rem;line-height:1.5;} .leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,0.65);border-radius:4px;} .leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:black;} .leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block;} .leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4;} .leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px;} .leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none;} .leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb;} .leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px;} .leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px;} .leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px;} .leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px;} .leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px;} .leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,0.4);background:#fff;border-radius:5px;} .leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px;} .leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none;} .leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative;} .leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff;} .leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px;} .leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px;} .leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em;} .leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px;} .leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,0.8);margin:0;} .leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4;} .leaflet-control-attribution a{text-decoration:none;} .leaflet-control-attribution a:hover,.leaflet-control-attribution a:focus{text-decoration:underline;} .leaflet-attribution-flag{display:inline !important;vertical-align:baseline !important;width:1em;height:0.6669em;} .leaflet-left .leaflet-control-scale{margin-left:5px;} .leaflet-bottom .leaflet-control-scale{margin-bottom:5px;} .leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,0.8);text-shadow:1px 1px #fff;} .leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px;} .leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777;} .leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{box-shadow:none;} .leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{border:2px solid rgba(0,0,0,0.2);background-clip:padding-box;} .leaflet-popup{position:absolute;text-align:center;margin-bottom:20px;} .leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px;} .leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px;} .leaflet-popup-content p{margin:17px 0;margin:1.3em 0;} .leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none;} .leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);} .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:white;color:#333;box-shadow:0 3px 14px rgba(0,0,0,0.4);} .leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:transparent;} .leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858;} .leaflet-popup-scrolled{overflow:auto;} .leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1;} .leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto;-ms-filter:"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678)";filter:progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678,M12=0.70710678,M21=-0.70710678,M22=0.70710678);} .leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999;} .leaflet-div-icon{background:#fff;border:1px solid #666;} .leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,0.4);} .leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto;} .leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:transparent;content:"";} .leaflet-tooltip-bottom{margin-top:6px;} .leaflet-tooltip-top{margin-top:-6px;} .leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px;} .leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff;} .leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff;} .leaflet-tooltip-left{margin-left:-6px;} .leaflet-tooltip-right{margin-left:6px;} .leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px;} .leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff;} .leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff;} @media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><b>LANÇAMENTO</b><span>CSL · HALO / HAHO · GFS / ECMWF</span></div>
+    <div class="cyc" id="cycChip"><strong>SEM VENTOS</strong>busque no NOAA</div>
+  </div>
+  <div class="banner" id="newCycle" hidden><div class="wrap"><span id="newCycleTxt">Novo ciclo GFS disponível.</span><button class="btn small" id="newCycleBtn" type="button">Atualizar</button></div></div>
+</header>
+
+<main class="wrap">
+<!-- ===================== MISSÃO ===================== -->
+<section class="view" id="v-missao" role="tabpanel" aria-labelledby="t-missao">
+  <div><div class="eyebrow">Cabeçalho da planilha</div><h2 class="sec">Dados da missão</h2></div>
+
+  <div class="card">
+    <h3><span class="step">1</span>Alvo</h3>
+    <div class="grid2">
+      <div class="fld"><label for="lat">Latitude</label><input id="lat" class="num" type="text" autocomplete="off" spellcheck="false" placeholder="-22.476475"><span class="err" id="latErr" hidden></span></div>
+      <div class="fld"><label for="lon">Longitude</label><input id="lon" class="num" type="text" autocomplete="off" spellcheck="false" placeholder="-44.477803"><span class="err" id="lonErr" hidden></span></div>
+    </div>
+    <p class="hint">Graus decimais (sul e oeste negativos). Aceita colar o par copiado do Google Maps/Earth em qualquer campo, e também graus-minutos-segundos com S/W/O.</p>
+    <div class="readout"><span>Declinação magnética (WMM2025): <b id="declRead">—</b></span></div>
+    <div class="btnrow"><button class="btn small" type="button" id="gpsBtn">Usar minha posição</button></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="step">2</span>GDH do lançamento</h3>
+    <div class="grid2">
+      <div class="fld span2"><label for="date">Data</label><input id="date" type="date"></div>
+      <div class="fld"><label for="time">Hora</label><input id="time" type="time" step="60"></div>
+      <div class="fld"><label for="tz">Fuso</label>
+        <select id="tz">
+          <option value="P">P (UTC−3)</option><option value="O">O (UTC−2)</option><option value="Q">Q (UTC−4)</option><option value="R">R (UTC−5)</option><option value="Z">Z (UTC)</option>
+        </select></div>
+    </div>
+    <div class="readout"><span>GDH <b id="gdhRead">—</b></span><span>UTC <b id="utcRead">—</b></span></div>
+  </div>
+
+  <div class="card">
+    <h3><span class="step">3</span>Alturas</h3>
+    <div class="grid2">
+      <div class="fld"><label for="elev">Altitude da área de salto (ft)</label><input id="elev" class="num" type="text" inputmode="numeric"></div>
+      <div class="fld"><label for="hLanc">Altura de lançamento (ft)</label><input id="hLanc" class="num" type="text" inputmode="numeric"></div>
+      <div class="fld"><label for="hCmd">Altura de comandamento (ft)</label><input id="hCmd" class="num" type="text" inputmode="numeric"></div>
+      <div class="fld"><label for="altLanc">Altitude de lançamento (ft)</label><input id="altLanc" class="num" type="text" readonly tabindex="-1"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="step">4</span>Aeronave e saltadores</h3>
+    <div class="grid2">
+      <div class="fld"><label for="ac">Aeronave</label><select id="ac"></select></div>
+      <div class="fld"><label for="acVel">Velocidade (m/s)</label><input id="acVel" class="num" type="text" inputmode="decimal"></div>
+      <div class="fld"><label for="arr">Arrasto (m)</label><input id="arr" class="num" type="text" inputmode="numeric"></div>
+      <div class="fld"><label for="nb">NB · nº de blocos</label><input id="nb" class="num" type="text" inputmode="numeric"></div>
+      <div class="fld"><label for="interval">I · intervalo (s)</label><input id="interval" class="num" type="text" inputmode="decimal"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="step">5</span>Paraquedas</h3>
+    <div class="grid2">
+      <div class="fld span2"><label for="pq">Modelo</label><select id="pq"></select></div>
+      <div class="fld"><label for="pqVa">Va (kt)</label><input id="pqVa" class="num" type="text" inputmode="decimal"></div>
+      <div class="fld"><label for="pqG">Planeio G</label><input id="pqG" class="num" type="text" inputmode="decimal"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="step">6</span>Modelo de previsão</h3>
+    <div class="fld"><label for="model">Ventos de</label>
+      <select id="model"><option value="both">GFS (NOAA) + ECMWF — comparar</option><option value="gfs">Só GFS (NOAA)</option><option value="ecmwf">Só ECMWF</option></select></div>
+    <p class="hint">Com os dois, o resultado principal sai do GFS (método do memento) e o ECMWF entra como comparação; dá para trocar o modelo exibido nas outras abas. O ECMWF aberto não tem os níveis 975, 950, 900, 800, 750 e 650 mb: o app interpola esses níveis entre os vizinhos.</p>
+  </div>
+
+  <details class="adv" id="advBox">
+    <summary>Parâmetros do método</summary>
+    <div class="inner">
+      <p class="hint">Valores padrão das planilhas Lançamento (aba Control e HALO). Altere só com orientação da 3ª Seção.</p>
+      <div class="grid2">
+        <div class="fld"><label for="hOpen">Abertura p/ cálculo VA (ft)</label><input id="hOpen" class="num" type="text" inputmode="numeric"></div>
+        <div class="fld"><label for="hMin">Mínimo sobre o alvo (ft)</label><input id="hMin" class="num" type="text" inputmode="numeric"></div>
+        <div class="fld"><label for="factor">Fator de segurança VA</label><input id="factor" class="num" type="text" inputmode="decimal"></div>
+        <div class="fld"><label for="K">K da queda livre</label><input id="K" class="num" type="text" inputmode="decimal"></div>
+        <div class="fld"><label for="gex">Exclusão vento de solo (ft)</label><input id="gex" class="num" type="text" inputmode="numeric"></div>
+        <div class="fld"><label for="mmode">Margem de segurança</label>
+          <select id="mmode"><option value="memento">Memento (200 m a cada 500 m)</option><option value="planilha">Planilha (200/400/800/1000)</option><option value="manual">Manual</option></select></div>
+        <div class="fld" id="mmanBox"><label for="mman">Margem manual (m)</label><input id="mman" class="num" type="text" inputmode="numeric"></div>
+        <div class="fld"><label for="dmode">Declinação</label>
+          <select id="dmode"><option value="auto">WMM2025 arredondada</option><option value="exact">WMM2025 exata</option><option value="manual">Manual</option></select></div>
+        <div class="fld" id="dmanBox"><label for="dman">Declinação manual (° W)</label><input id="dman" class="num" type="text" inputmode="decimal"></div>
+        <div class="fld"><label for="einterp">Níveis ausentes no ECMWF</label>
+          <select id="einterp"><option value="interp">Interpolar (u/v em ln p)</option><option value="ignore">Ignorar na média</option></select></div>
+      </div>
+    </div>
+  </details>
+
+  <button class="btn primary" id="goBtn" type="button">Buscar ventos e calcular</button>
+  <div id="goMsg" hidden></div>
+  <p class="foot">Ventos: modelos GFS (NOAA/NCEP) e ECMWF IFS, sempre no ciclo mais recente disponível, obtidos pela API aberta Open-Meteo (o READY da NOAA exige código de acesso e não permite consulta automática). Declinação: World Magnetic Model 2025 (NOAA/NCEI), calculado no próprio aparelho.</p>
+</section>
+
+<!-- ===================== VENTOS ===================== -->
+<section class="view" id="v-ventos" role="tabpanel" aria-labelledby="t-ventos" hidden>
+  <div><div class="eyebrow">Passos 1 a 3 do memento</div><h2 class="sec">Ventos por camada</h2></div>
+  <div class="modelbar" hidden></div>
+  <div class="card">
+    <h3>Fonte</h3>
+    <dl class="src" id="srcBox"><dt>Status</dt><dd>Nenhum dado carregado</dd></dl>
+    <div class="btnrow">
+      <button class="btn small" type="button" id="refreshBtn">Atualizar</button>
+      <button class="btn small" type="button" id="pasteBtn">Colar windgram READY</button>
+      <button class="btn small" type="button" id="manualBtn">Digitar à mão</button>
+    </div>
+    <div id="pasteBox" hidden>
+      <div class="fld"><label for="pasteTxt">Texto do windgram (READY → Text only)</label>
+      <textarea id="pasteTxt" spellcheck="false" placeholder="DATA INITIAL TIME: 12 JUN 2022 12Z&#10;CALCULATION STARTED AT: 13 JUN 2022 18Z&#10;600.mb 227@011 207@008 184@003&#10;650.mb 235@006 213@004 168@001&#10;…"></textarea></div>
+      <div class="btnrow" style="margin-top:8px"><button class="btn small" type="button" id="pasteApply">Aplicar 1ª coluna (+0 h)</button><button class="btn small" type="button" id="pasteCancel">Cancelar</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Camadas</h3>
+    <div class="legend">
+      <span><span class="chip VA">VA</span>velame aberto</span>
+      <span><span class="chip QL">QL</span>queda livre</span>
+      <span><span class="chip SOLO">SOLO</span>vento de solo, excluído</span>
+      <span><span class="flag">⚠</span>possível erro de previsão</span>
+      <span><span class="itag" style="margin:0">int</span>interpolado (ECMWF)</span>
+    </div>
+    <p class="hint">Seleção automática pelo ponto médio de cada camada (planilha Lançamento Auto). Toque em VA/QL para excluir uma camada com erro de previsão. Direção e velocidade podem ser corrigidas à mão.</p>
+    <div class="tblwrap"><table class="wx" id="wxTbl"></table></div>
+    <div class="btnrow"><button class="btn small" type="button" id="allLvBtn">Mostrar todos os níveis</button></div>
+  </div>
+</section>
+
+<!-- ===================== RESULTADO ===================== -->
+<section class="view" id="v-res" role="tabpanel" aria-labelledby="t-res" hidden>
+  <div><div class="eyebrow">Passos 4 e 5 do memento</div><h2 class="sec">Resultado do lançamento</h2></div>
+  <div class="modelbar" hidden></div>
+  <div id="resBox"></div>
+</section>
+
+<!-- ===================== MAPA ===================== -->
+<section class="view" id="v-mapa" role="tabpanel" aria-labelledby="t-mapa" hidden>
+  <div><div class="eyebrow">Padronização Google Earth</div><h2 class="sec">Gráfico do lançamento</h2></div>
+  <div class="modelbar" hidden></div>
+  <div class="seg modes" role="group" aria-label="Tipo de lançamento">
+    <button type="button" data-mode="nariz" aria-pressed="true">Nariz</button>
+    <button type="button" data-mode="cauda" aria-pressed="false">Cauda</button>
+    <button type="button" data-mode="bc" aria-pressed="false">Boca cone</button>
+    <button type="button" data-mode="todos" aria-pressed="false">Todos</button>
+  </div>
+  <div class="mapbox" id="schem"></div>
+  <label class="check" id="ovRow" hidden><input type="checkbox" id="ovChk" checked>Sobrepor o <span id="ovName">ECMWF</span> (tracejado)</label>
+  <div class="legend" id="mapLegend">
+    <span><span class="swatch" style="background:var(--va)"></span>Velame aberto</span>
+    <span><span class="swatch" style="background:var(--ql)"></span>Queda livre</span>
+    <span><span class="swatch" style="background:var(--mg)"></span>Margem de seg.</span>
+    <span><span class="swatch" style="background:var(--disp)"></span>Dispersão</span>
+    <span><span class="swatch" style="background:var(--arr)"></span>Arrasto</span>
+  </div>
+  <div class="card">
+    <h3>Imagem de satélite</h3>
+    <div id="sat" hidden></div>
+    <div id="satMsg" class="hint">Carrega a imagem de satélite com o traçado (precisa de internet).</div>
+    <div class="btnrow"><button class="btn small" type="button" id="satBtn">Mostrar satélite</button><button class="btn small" type="button" id="kmlBtn2">Exportar KML (Google Earth)</button></div>
+  </div>
+</section>
+</main>
+
+<nav class="tabs" role="tablist" aria-label="Seções">
+  <div class="in">
+    <button role="tab" id="t-missao" aria-controls="v-missao" aria-selected="true" data-v="missao" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>Missão</button>
+    <button role="tab" id="t-ventos" aria-controls="v-ventos" aria-selected="false" data-v="ventos" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h16a3 3 0 1 1-3 3"/><path d="M3 16h7"/></svg>Ventos</button>
+    <button role="tab" id="t-res" aria-controls="v-res" aria-selected="false" data-v="res" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18"/><path d="M12 3l-4 5h8z" fill="currentColor"/><path d="M5 14h4M15 14h4M5 18h4M15 18h4"/></svg>Resultado<span class="dot" id="resDot" hidden></span></button>
+    <button role="tab" id="t-mapa" aria-controls="v-mapa" aria-selected="false" data-v="mapa" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Mapa</button>
+  </div>
+</nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const WMM_COF=[[1,0,-29351.8,0.0,12.0,0.0],[1,1,-1410.8,4545.4,9.7,-21.5],[2,0,-2556.6,0.0,-11.6,0.0],[2,1,2951.1,-3133.6,-5.2,-27.7],[2,2,1649.3,-815.1,-8.0,-12.1],[3,0,1361.0,0.0,-1.3,0.0],[3,1,-2404.1,-56.6,-4.2,4.0],[3,2,1243.8,237.5,0.4,-0.3],[3,3,453.6,-549.5,-15.6,-4.1],[4,0,895.0,0.0,-1.6,0.0],[4,1,799.5,278.6,-2.4,-1.1],[4,2,55.7,-133.9,-6.0,4.1],[4,3,-281.1,212.0,5.6,1.6],[4,4,12.1,-375.6,-7.0,-4.4],[5,0,-233.2,0.0,0.6,0.0],[5,1,368.9,45.4,1.4,-0.5],[5,2,187.2,220.2,0.0,2.2],[5,3,-138.7,-122.9,0.6,0.4],[5,4,-142.0,43.0,2.2,1.7],[5,5,20.9,106.1,0.9,1.9],[6,0,64.4,0.0,-0.2,0.0],[6,1,63.8,-18.4,-0.4,0.3],[6,2,76.9,16.8,0.9,-1.6],[6,3,-115.7,48.8,1.2,-0.4],[6,4,-40.9,-59.8,-0.9,0.9],[6,5,14.9,10.9,0.3,0.7],[6,6,-60.7,72.7,0.9,0.9],[7,0,79.5,0.0,-0.0,0.0],[7,1,-77.0,-48.9,-0.1,0.6],[7,2,-8.8,-14.4,-0.1,0.5],[7,3,59.3,-1.0,0.5,-0.8],[7,4,15.8,23.4,-0.1,0.0],[7,5,2.5,-7.4,-0.8,-1.0],[7,6,-11.1,-25.1,-0.8,0.6],[7,7,14.2,-2.3,0.8,-0.2],[8,0,23.2,0.0,-0.1,0.0],[8,1,10.8,7.1,0.2,-0.2],[8,2,-17.5,-12.6,0.0,0.5],[8,3,2.0,11.4,0.5,-0.4],[8,4,-21.7,-9.7,-0.1,0.4],[8,5,16.9,12.7,0.3,-0.5],[8,6,15.0,0.7,0.2,-0.6],[8,7,-16.8,-5.2,-0.0,0.3],[8,8,0.9,3.9,0.2,0.2],[9,0,4.6,0.0,-0.0,0.0],[9,1,7.8,-24.8,-0.1,-0.3],[9,2,3.0,12.2,0.1,0.3],[9,3,-0.2,8.3,0.3,-0.3],[9,4,-2.5,-3.3,-0.3,0.3],[9,5,-13.1,-5.2,0.0,0.2],[9,6,2.4,7.2,0.3,-0.1],[9,7,8.6,-0.6,-0.1,-0.2],[9,8,-8.7,0.8,0.1,0.4],[9,9,-12.9,10.0,-0.1,0.1],[10,0,-1.3,0.0,0.1,0.0],[10,1,-6.4,3.3,0.0,0.0],[10,2,0.2,0.0,0.1,-0.0],[10,3,2.0,2.4,0.1,-0.2],[10,4,-1.0,5.3,-0.0,0.1],[10,5,-0.6,-9.1,-0.3,-0.1],[10,6,-0.9,0.4,0.0,0.1],[10,7,1.5,-4.2,-0.1,0.0],[10,8,0.9,-3.8,-0.1,-0.1],[10,9,-2.7,0.9,-0.0,0.2],[10,10,-3.9,-9.1,-0.0,-0.0],[11,0,2.9,0.0,0.0,0.0],[11,1,-1.5,0.0,-0.0,-0.0],[11,2,-2.5,2.9,0.0,0.1],[11,3,2.4,-0.6,0.0,-0.0],[11,4,-0.6,0.2,0.0,0.1],[11,5,-0.1,0.5,-0.1,-0.0],[11,6,-0.6,-0.3,0.0,-0.0],[11,7,-0.1,-1.2,-0.0,0.1],[11,8,1.1,-1.7,-0.1,-0.0],[11,9,-1.0,-2.9,-0.1,0.0],[11,10,-0.2,-1.8,-0.1,0.0],[11,11,2.6,-2.3,-0.1,0.0],[12,0,-2.0,0.0,0.0,0.0],[12,1,-0.2,-1.3,0.0,-0.0],[12,2,0.3,0.7,-0.0,0.0],[12,3,1.2,1.0,-0.0,-0.1],[12,4,-1.3,-1.4,-0.0,0.1],[12,5,0.6,-0.0,-0.0,-0.0],[12,6,0.6,0.6,0.1,-0.0],[12,7,0.5,-0.1,-0.0,-0.0],[12,8,-0.1,0.8,0.0,0.0],[12,9,-0.4,0.1,0.0,-0.0],[12,10,-0.2,-1.0,-0.1,-0.0],[12,11,-1.3,0.1,-0.0,0.0],[12,12,-0.7,0.2,-0.1,-0.1]];
+// WMM2025 — World Magnetic Model (NOAA NCEI / BGS). Port of NOAA geomag algorithm.
+function makeWMM(rows, epoch){
+  const N=13, maxord=12;
+  const A=6378.137, B=6356.7523142, RE=6371.2, a2=A*A, b2=B*B, c2=a2-b2, a4=a2*a2, b4=b2*b2, c4=a4-b4;
+  const M=()=>Array.from({length:N},()=>new Float64Array(N));
+  const c=M(), cd=M(), k=M(), snorm=new Float64Array(N*N), fn=new Float64Array(N), fm=new Float64Array(N);
+  for(const [n,m,g,h,dg,dh] of rows){
+    if(m<=n){ c[m][n]=g; cd[m][n]=dg; if(m!==0){ c[n][m-1]=h; cd[n][m-1]=dh; } }
+  }
+  snorm[0]=1; fm[0]=0;
+  for(let n=1;n<=maxord;n++){
+    snorm[n]=snorm[n-1]*(2*n-1)/n;
+    let j=2;
+    for(let m=0;m<=n;m++){
+      k[m][n]=((n-1)*(n-1)-m*m)/((2*n-1)*(2*n-3));
+      if(m>0){
+        const flnmj=((n-m+1)*j)/(n+m);
+        snorm[n+m*N]=snorm[n+(m-1)*N]*Math.sqrt(flnmj);
+        j=1;
+        c[n][m-1]*=snorm[n+m*N]; cd[n][m-1]*=snorm[n+m*N];
+      }
+      c[m][n]*=snorm[n+m*N]; cd[m][n]*=snorm[n+m*N];
+    }
+    fn[n]=n+1; fm[n]=n;
+  }
+  k[1][1]=0;
+  return function(latDeg, lonDeg, altKm, decYear){
+    const dt=decYear-epoch, rad=Math.PI/180;
+    const rlat=latDeg*rad, rlon=lonDeg*rad;
+    const srlon=Math.sin(rlon), crlon=Math.cos(rlon), srlat=Math.sin(rlat), crlat=Math.cos(rlat);
+    const srlat2=srlat*srlat, crlat2=crlat*crlat;
+    const sp=new Float64Array(N), cp=new Float64Array(N), p=new Float64Array(N*N), pp=new Float64Array(N), dp=M(), tc=M();
+    sp[0]=0; cp[0]=1; sp[1]=srlon; cp[1]=crlon;
+    const q=Math.sqrt(a2-c2*srlat2), q1=altKm*q, q2=((q1+a2)/(q1+b2))**2;
+    const ct=srlat/Math.sqrt(q2*crlat2+srlat2), st=Math.sqrt(1-ct*ct);
+    const r2=altKm*altKm+2*q1+(a4-c4*srlat2)/(q*q), r=Math.sqrt(r2);
+    const d=Math.sqrt(a2*crlat2+b2*srlat2), ca=(altKm+d)/r, sa=c2*crlat*srlat/(r*d);
+    for(let m=2;m<=maxord;m++){ sp[m]=sp[1]*cp[m-1]+cp[1]*sp[m-1]; cp[m]=cp[1]*cp[m-1]-sp[1]*sp[m-1]; }
+    const aor=RE/r; let ar=aor*aor, br=0, bt=0, bp=0, bpp=0;
+    p[0]=1; pp[0]=1; dp[0][0]=0;
+    for(let n=1;n<=maxord;n++){
+      ar*=aor;
+      for(let m=0;m<=n;m++){
+        if(n===m){ p[n+m*N]=st*p[n-1+(m-1)*N]; dp[m][n]=st*dp[m-1][n-1]+ct*p[n-1+(m-1)*N]; }
+        else if(n===1&&m===0){ p[n+m*N]=ct*p[n-1+m*N]; dp[m][n]=ct*dp[m][n-1]-st*p[n-1+m*N]; }
+        else if(n>1&&n!==m){
+          if(m>n-2){ p[n-2+m*N]=0; dp[m][n-2]=0; }
+          p[n+m*N]=ct*p[n-1+m*N]-k[m][n]*p[n-2+m*N];
+          dp[m][n]=ct*dp[m][n-1]-st*p[n-1+m*N]-k[m][n]*dp[m][n-2];
+        }
+        tc[m][n]=c[m][n]+dt*cd[m][n];
+        if(m!==0) tc[n][m-1]=c[n][m-1]+dt*cd[n][m-1];
+        const par=ar*p[n+m*N];
+        let t1,t2;
+        if(m===0){ t1=tc[m][n]*cp[m]; t2=tc[m][n]*sp[m]; }
+        else { t1=tc[m][n]*cp[m]+tc[n][m-1]*sp[m]; t2=tc[m][n]*sp[m]-tc[n][m-1]*cp[m]; }
+        bt-=ar*t1*dp[m][n]; bp+=fm[m]*t2*par; br+=fn[n]*t1*par;
+        if(st===0&&m===1){ pp[n]= n===1? pp[n-1] : ct*pp[n-1]-k[m][n]*pp[n-2]; bpp+=fm[m]*t2*ar*pp[n]; }
+      }
+    }
+    bp = st===0 ? bpp : bp/st;
+    const bx=-bt*ca-br*sa, by=bp;
+    return Math.atan2(by,bx)/rad;
+  };
+}
+
+// ===== Núcleo de cálculo — método do Memento NOAA / planilhas Lançamento (CSL) =====
+const KT_FTS = 1.68781, FT_M = 0.3048;
+
+// Tabela fixa de níveis (ALTITUDE NOAA, ft) — idêntica às planilhas
+const LEVELS = [
+  {p:20,alt:86900},{p:50,alt:67500},{p:100,alt:53100},{p:150,alt:44600},{p:200,alt:38700},
+  {p:250,alt:34000},{p:300,alt:30100},{p:350,alt:26600},{p:400,alt:23600},{p:450,alt:20800},
+  {p:500,alt:18300},{p:550,alt:16000},{p:600,alt:13800},{p:650,alt:11800},{p:700,alt:9900},
+  {p:750,alt:8100},{p:800,alt:6400},{p:850,alt:4800},{p:900,alt:3200},{p:925,alt:2500},
+  {p:950,alt:1800},{p:975,alt:1100},{p:1000,alt:400},{p:1013,alt:0}
+];
+
+const AIRCRAFT = [
+  {id:'C-390',vel:70,arr:300},{id:'C-105',vel:70,arr:300},{id:'C-95',vel:60,arr:300},
+  {id:'BEECH99',vel:60,arr:300},{id:'GRAN C',vel:40,arr:150},{id:'CARAV',vel:40,arr:150},{id:'HP',vel:40,arr:150}
+];
+const PARACHUTES = [
+  {id:'Scorpion 190',va:30.73,g:3.53},{id:'Merlin 260',va:28.58,g:3.95},{id:'VP 300',va:23.69,g:3.2}
+];
+
+const norm360 = x => { let v = ((x % 360) + 360) % 360; return v === 0 ? 360 : v; };
+const round5 = x => norm360(Math.round(x / 5) * 5);
+const angDiff = (a, b) => { const d = Math.abs(((a - b) % 360 + 540) % 360 - 180); return d; };
+
+// Seleção automática de camadas (planilha Lançamento Auto: colunas AA/AB/AC)
+// ponto médio = (altitude do nível + altitude do nível imediatamente acima)/2
+function selectLayers(elev, hLanc, hCmd, groundExcl) {
+  const ok = [elev, hLanc, hCmd].every(Number.isFinite) && elev >= 0 && hCmd > 0 && hLanc > hCmd;
+  return LEVELS.map((L, i) => {
+    if (i === 0 || !ok) return {p: L.p, mid: null, use: null};
+    const mid = (L.alt + LEVELS[i - 1].alt) / 2;
+    let use = null;
+    if (mid > elev + groundExcl && mid < elev + hCmd) use = 'VA';
+    else if (mid > elev + groundExcl && mid >= elev + hCmd && mid < elev + hLanc) use = 'QL';
+    return {p: L.p, mid, use, ground: mid <= elev + groundExcl};
+  });
+}
+
+// Média de direções pela regra do memento (OBS): ventos no 4º e 1º quadrantes →
+// soma 360° nos do 1º quadrante, faz a média e, se passar de 360, subtrai 360.
+function meanDirDoctrine(dirs) {
+  if (!dirs.length) return null;
+  const has4 = dirs.some(d => d >= 270 && d <= 360);
+  const has1 = dirs.some(d => d >= 0 && d <= 90);
+  const adj = (has4 && has1) ? dirs.map(d => (d <= 90 ? d + 360 : d)) : dirs.slice();
+  const sum = adj.reduce((a, b) => a + b, 0);
+  const avg = sum / adj.length;
+  const avgN = avg > 360 ? avg - 360 : avg;
+  return {applied360: has4 && has1, adjusted: adj, sum, avg, deg: norm360(Math.round(avgN))};
+}
+// Média vetorial (só para conferência)
+function vectorMean(dirs, spds) {
+  let x = 0, y = 0;
+  dirs.forEach((d, i) => { const s = spds[i] || 0; x += s * Math.sin(d * Math.PI / 180); y += s * Math.cos(d * Math.PI / 180); });
+  if (Math.hypot(x, y) < 1e-9) return null;
+  return norm360(Math.atan2(x, y) * 180 / Math.PI);
+}
+
+// Velame aberto: D = (Δh/Vv)·(Va−W) × fator (planilha VA_Nariz!B26)
+function vaDistance(Va, G, hOpen, hMin, W, factor) {
+  const dh = hOpen - hMin;               // ft
+  const vv = (Va * KT_FTS) / G;          // ft/s
+  const t = dh / vv;                     // s
+  const D = t * ((Va - W) * KT_FTS) * FT_M * factor; // m
+  return {dh, vv, vvMs: vv * FT_M, t, D, noProgress: W >= Va};
+}
+// Queda livre: D = K·V·A
+function qlDistance(K, V, hLanc, hCmd) {
+  const A = (hLanc - hCmd) / 1000;
+  return {A, D: K * V * A};
+}
+// Margem de segurança (boca do cone)
+function safetyMargin(dVA, mode) {
+  const d = Math.abs(dVA);
+  if (mode === 'planilha') {
+    if (d < 1000) return {m: 200, note: ''};
+    if (d < 2000) return {m: 400, note: ''};
+    if (d < 3000) return {m: 800, note: ''};
+    if (d < 4000) return {m: 1000, note: ''};
+    return {m: 200 * Math.max(1, Math.floor(d / 500)), note: 'Fora da tabela da planilha (≥ 4000 m): aplicada a regra do memento.'};
+  }
+  // Memento: 0–999 m → 200; 1000–1499 → 400; 1500–1999 → 600; … (+200 m a cada 500 m)
+  return {m: 200 * Math.max(1, Math.floor(d / 500)), note: ''};
+}
+
+// ===== Geodésia WGS84 (Vincenty direto) =====
+function destPoint(lat, lon, azDeg, dist) {
+  if (dist < 0) { dist = -dist; azDeg += 180; }
+  if (dist === 0) return [lat, lon];
+  const rad = Math.PI / 180, a = 6378137, b = 6356752.314245, f = 1 / 298.257223563;
+  const a1 = azDeg * rad, sA1 = Math.sin(a1), cA1 = Math.cos(a1);
+  const tanU1 = (1 - f) * Math.tan(lat * rad), cU1 = 1 / Math.sqrt(1 + tanU1 * tanU1), sU1 = tanU1 * cU1;
+  const s1 = Math.atan2(tanU1, cA1), sA = cU1 * sA1, cSqA = 1 - sA * sA;
+  const uSq = cSqA * (a * a - b * b) / (b * b);
+  const A = 1 + uSq / 16384 * (4096 + uSq * (-768 + uSq * (320 - 175 * uSq)));
+  const B = uSq / 1024 * (256 + uSq * (-128 + uSq * (74 - 47 * uSq)));
+  let sig = dist / (b * A), sigP, c2m, sS, cS, it = 0;
+  do {
+    c2m = Math.cos(2 * s1 + sig); sS = Math.sin(sig); cS = Math.cos(sig);
+    const dS = B * sS * (c2m + B / 4 * (cS * (-1 + 2 * c2m * c2m) - B / 6 * c2m * (-3 + 4 * sS * sS) * (-3 + 4 * c2m * c2m)));
+    sigP = sig; sig = dist / (b * A) + dS;
+  } while (Math.abs(sig - sigP) > 1e-12 && ++it < 200);
+  const x = sU1 * sS - cU1 * cS * cA1;
+  const lat2 = Math.atan2(sU1 * cS + cU1 * sS * cA1, (1 - f) * Math.sqrt(sA * sA + x * x));
+  const lam = Math.atan2(sS * sA1, cU1 * cS - sU1 * sS * cA1);
+  const C = f / 16 * cSqA * (4 + f * (4 - 3 * cSqA));
+  const L = lam - (1 - C) * f * sA * (sig + C * sS * (c2m + C * cS * (-1 + 2 * c2m * c2m)));
+  let lon2 = lon + L / rad;
+  lon2 = ((lon2 + 540) % 360) - 180;
+  return [lat2 / rad, lon2];
+}
+
+// ===== Cálculo completo =====
+// inp: {lat,lon, elev,hLanc,hCmd, nb,interval, acVel,arrasto, va,g, hOpen,hMin, factor,K,groundExcl, marginMode, marginManual, decl (E+), declRound}
+// winds: {p: {dir, spd}} ; exclude: Set de pressões excluídas manualmente
+function computeAll(inp, winds, exclude) {
+  const out = {warnings: [], errors: []};
+  const sel = selectLayers(inp.elev, inp.hLanc, inp.hCmd, inp.groundExcl);
+  out.sel = sel;
+  const pick = use => sel.filter(s => s.use === use && !(exclude && exclude.has(s.p)))
+    .map(s => ({p: s.p, ...(winds[s.p] || {})}))
+    .filter(r => Number.isFinite(r.dir) && Number.isFinite(r.spd));
+  const vaL = pick('VA'), qlL = pick('QL');
+  const missing = sel.filter(s => s.use && !(exclude && exclude.has(s.p)) && !(winds[s.p] && Number.isFinite(winds[s.p].dir) && Number.isFinite(winds[s.p].spd))).map(s => s.p);
+  if (missing.length) out.warnings.push('Sem dados de vento em ' + missing.join(', ') + ' mb.');
+  out.vaLayers = vaL; out.qlLayers = qlL;
+  if (!vaL.length) out.errors.push('Nenhuma camada de velame aberto com dados. Confira altitude da área e altura de comandamento.');
+  if (!qlL.length) out.errors.push('Nenhuma camada de queda livre com dados. Confira altura de lançamento e de comandamento.');
+  if (out.errors.length) return out;
+
+  // Velame aberto
+  const W = vaL.reduce((a, r) => a + r.spd, 0) / vaL.length;
+  const vaDir = meanDirDoctrine(vaL.map(r => r.dir));
+  const va = vaDistance(inp.va, inp.g, inp.hOpen, inp.hMin, W, inp.factor);
+  out.VA = {n: vaL.length, W, dirInfo: vaDir, dir: vaDir.deg, ...va,
+    vecDir: vectorMean(vaL.map(r => r.dir), vaL.map(r => r.spd))};
+  if (va.noProgress) out.warnings.push('SEM PROGRESSÃO: vento médio do velame aberto (' + W.toFixed(1) + ' kt) ≥ velocidade do paraquedas (' + inp.va + ' kt).');
+
+  // Queda livre
+  const V = qlL.reduce((a, r) => a + r.spd, 0) / qlL.length;
+  const qlDir = meanDirDoctrine(qlL.map(r => r.dir));
+  const ql = qlDistance(inp.K, V, inp.hLanc, inp.hCmd);
+  out.QL = {n: qlL.length, V, dirInfo: qlDir, dir: qlDir.deg, ...ql,
+    vecDir: vectorMean(qlL.map(r => r.dir), qlL.map(r => r.spd))};
+
+  for (const [k, lbl] of [['VA', 'velame aberto'], ['QL', 'queda livre']]) {
+    const o = out[k];
+    if (o.vecDir != null && angDiff(o.vecDir, o.dir) > 20)
+      out.warnings.push('Direções das camadas de ' + lbl + ' muito dispersas: média aritmética ' + o.dir + '°, média vetorial ' + Math.round(o.vecDir) + '°. Verifique os ventos.');
+  }
+
+  // Declinação (W positiva no método: NM = NV + decl W)
+  const declW = inp.declRound ? Math.round(-inp.decl) : -inp.decl;
+  out.declW = declW;
+
+  // Dispersão, arrasto, margem
+  out.dispNariz = inp.nb * inp.interval * inp.acVel;
+  out.dispBC = 0.5 * inp.nb * inp.interval * inp.acVel;
+  out.arrasto = inp.arrasto;
+  const mg = safetyMargin(out.VA.D, inp.marginMode);
+  out.margem = (inp.marginManual > 0) ? inp.marginManual : mg.m;
+  if (mg.note && !(inp.marginManual > 0)) out.warnings.push(mg.note);
+
+  // Azimutes (planilha HALO col. L–N)
+  const d = out.VA.dir;
+  out.az = {
+    perp1: norm360(d + 90), perp2: norm360(d + 270), contraVA: norm360(d + 180),
+    nariz: round5(d + declW), cauda: round5(d + declW + 180),
+    bc1: round5(d + declW + 90), bc2: round5(d + declW + 270),
+    navPqdt: norm360(Math.round(d + 180 + declW))
+  };
+
+  // Geometria (equivale ao traçado no Google Earth — azimutes verdadeiros)
+  const T = [inp.lat, inp.lon];
+  const PA = destPoint(T[0], T[1], d, out.VA.D);                 // fim do velame aberto (vermelho)
+  const PSP = destPoint(PA[0], PA[1], out.QL.dir, out.QL.D);     // fim da queda livre (branco)
+  // Nariz: do fim da QL, sentido oposto ao VA: dispersão (amarelo) + arrasto (azul)
+  const nDisp = destPoint(PSP[0], PSP[1], d + 180, out.dispNariz);
+  const PSN = destPoint(PSP[0], PSP[1], d + 180, out.dispNariz + out.arrasto);
+  // Cauda: só o arrasto, paralelo ao VA no mesmo sentido
+  const PSC = destPoint(PSP[0], PSP[1], d, out.arrasto);
+  // Boca do cone: margem (preto) oposta ao VA; dispersão/2 para cada lado na perpendicular + arrasto
+  const MC = destPoint(PSP[0], PSP[1], d + 180, out.margem);
+  const y1 = destPoint(MC[0], MC[1], d + 90, out.dispBC), y2 = destPoint(MC[0], MC[1], d + 270, out.dispBC);
+  const PSB1 = destPoint(MC[0], MC[1], d + 90, out.dispBC + out.arrasto);   // entrada no rumo d+270 (bc2)
+  const PSB2 = destPoint(MC[0], MC[1], d + 270, out.dispBC + out.arrasto);  // entrada no rumo d+90 (bc1)
+  out.pts = {T, PA, PSP, nDisp, PSN, PSC, MC, y1, y2, PSB1, PSB2};
+  return out;
+}
+
+// ===== Leitura do texto do Windgram READY (colar) =====
+function parseReady(text) {
+  const winds = {};
+  const re = /(\d{2,4})\.?\s*mb\s+(\d{1,3})\s*@\s*(\d{1,3})/gi;
+  let m, n = 0;
+  while ((m = re.exec(text))) {
+    const p = +m[1];
+    if (winds[p]) continue;          // só a 1ª coluna (FHR +0)
+    winds[p] = {dir: +m[2], spd: +m[3]}; n++;
+  }
+  const init = (text.match(/DATA INITIAL TIME:\s*([^\n&]+)/i) || [])[1];
+  const start = (text.match(/CALCULATION STARTED AT:\s*([^\n&]+)/i) || [])[1];
+  return {winds, n, init: init && init.trim(), start: start && start.trim()};
+}
+
+// ===== Interpolação vertical (níveis ausentes no ECMWF) =====
+// Interpola os componentes u/v linearmente em ln(p) entre os níveis disponíveis vizinhos.
+const ECMWF_LEVELS = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50];
+const uvOf = (dir, spd) => { const r = dir * Math.PI / 180; return [-spd * Math.sin(r), -spd * Math.cos(r)]; };
+const dirSpdOf = (u, v) => { const s = Math.hypot(u, v); return {dir: s < 1e-9 ? 360 : norm360(Math.atan2(-u, -v) * 180 / Math.PI), spd: s}; };
+const hasW = w => w && Number.isFinite(w.dir) && Number.isFinite(w.spd);
+function fillByInterp(winds, levels) {
+  const out = {};
+  const have = Object.keys(winds).map(Number).filter(p => hasW(winds[p])).sort((a, b) => a - b);
+  for (const p of levels) {
+    if (hasW(winds[p])) { out[p] = {...winds[p]}; continue; }
+    let lo = null, hi = null;                       // lo: nível acima (p menor); hi: nível abaixo (p maior)
+    for (const q of have) { if (q < p) lo = q; if (q > p && hi === null) hi = q; }
+    if (lo === null || hi === null) continue;
+    const A = winds[hi], B = winds[lo];
+    const da = A.raw ? A.raw.d : A.dir, sa = A.raw ? A.raw.s : A.spd, db = B.raw ? B.raw.d : B.dir, sb = B.raw ? B.raw.s : B.spd;
+    const w = Math.log(hi / p) / Math.log(hi / lo);
+    const [ua, va] = uvOf(da, sa), [ub, vb] = uvOf(db, sb);
+    const r = dirSpdOf(ua + w * (ub - ua), va + w * (vb - va));
+    out[p] = {dir: norm360(Math.round(r.dir)), spd: Math.round(r.spd), interp: true, from: [hi, lo], raw: {d: r.dir, s: r.spd}};
+  }
+  return out;
+}
+
+</script>
+<script>
+(function () {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const pad = (n, w = 2) => String(n).padStart(w, '0');
+const nf = (x, d = 0) => Number.isFinite(x) ? x.toLocaleString('pt-BR', {minimumFractionDigits: d, maximumFractionDigits: d}) : '—';
+const d3 = x => pad(Math.round(x), 3);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const MESES = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+const ZOFF = {P: -3, O: -2, Q: -4, R: -5, Z: 0};
+const wmmDecl = makeWMM(WMM_COF, 2025.0);
+const API = 'https://api.open-meteo.com/v1/forecast';
+const META = m => `https://api.open-meteo.com/data/${m}/static/meta.json`;
+const LS_IN = 'lcsl.inputs.v1', LS_WX = 'lcsl.wx.v2';
+const DOC_LEVELS = LEVELS.filter(l => l.p !== 1013).map(l => l.p);
+const MODELS = {
+  gfs: {key: 'gfs', name: 'GFS', long: 'NOAA/NCEP GFS 0,25°', api: 'ncep_gfs_global', meta: 'ncep_gfs025', levels: DOC_LEVELS, step: 'saída horária até +120 h'},
+  ecmwf: {key: 'ecmwf', name: 'ECMWF', long: 'ECMWF IFS 0,25° (dados abertos)', api: 'ecmwf_ifs025', meta: 'ecmwf_ifs025', levels: ECMWF_LEVELS, step: 'saída a cada 3 h; horas intermediárias interpoladas no tempo pela API'}
+};
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+// sets: dados por modelo; active: modelo exibido; res: resultados por modelo
+const S = {sets: {gfs: null, ecmwf: null}, active: 'gfs', res: {gfs: null, ecmwf: null}, mapMode: 'nariz', showAll: false, inp: null, sat: null, overlay: true};
+const curWx = () => S.sets[S.active];
+const curRes = () => S.res[S.active];
+const loaded = () => Object.keys(S.sets).filter(k => S.sets[k]);
+const both = () => !!(S.sets.gfs && S.sets.ecmwf);
+const other = () => S.active === 'gfs' ? 'ecmwf' : 'gfs';
+
+// ---------- Entradas ----------
+const FIELDS = ['lat', 'lon', 'date', 'time', 'tz', 'model', 'elev', 'hLanc', 'hCmd', 'ac', 'acVel', 'arr', 'nb', 'interval', 'pq', 'pqVa', 'pqG', 'hOpen', 'hMin', 'factor', 'K', 'gex', 'mmode', 'mman', 'dmode', 'dman', 'einterp'];
+function defaults() {
+  const p = new Date(Date.now() + 3600e3 - 3 * 3600e3);
+  return {
+    lat: '-22.476475', lon: '-44.477803',
+    date: `${p.getUTCFullYear()}-${pad(p.getUTCMonth() + 1)}-${pad(p.getUTCDate())}`, time: `${pad(p.getUTCHours())}:00`, tz: 'P', model: 'both',
+    elev: '1300', hLanc: '12000', hCmd: '5500',
+    ac: 'BEECH99', acVel: '60', arr: '300', nb: '3', interval: '5',
+    pq: 'Scorpion 190', pqVa: '30.73', pqG: '3.53',
+    hOpen: '3500', hMin: '1500', factor: '0.75', K: '3', gex: '700', mmode: 'memento', mman: '', dmode: 'auto', dman: '', einterp: 'interp'
+  };
+}
+function fillSelects() {
+  $('#ac').innerHTML = AIRCRAFT.map(a => `<option>${esc(a.id)}</option>`).join('') + '<option value="OUTRA">Outra</option>';
+  $('#pq').innerHTML = PARACHUTES.map(p => `<option>${esc(p.id)}</option>`).join('') + '<option value="OUTRO">Outro</option>';
+}
+function setVals(v) { for (const k of FIELDS) { const el = document.getElementById(k); if (el && v[k] != null) el.value = v[k]; } }
+function getVals() { const o = {}; for (const k of FIELDS) { const el = document.getElementById(k); o[k] = el ? el.value : ''; } return o; }
+const num = s => { if (s == null) return NaN; const t = String(s).trim().replace(/\s/g, '').replace(',', '.'); return t === '' ? NaN : Number(t); };
+
+function parseCoord(str, isLat) {
+  if (str == null) return NaN;
+  let s = String(str).trim().toUpperCase();
+  if (!s) return NaN;
+  let sign = 1;
+  const hm = s.match(/[NSEWLO]\s*$/) || s.match(/^\s*[NSEWLO]/);
+  if (hm) { const h = hm[0].trim(); if (h === 'S' || h === 'W' || h === 'O') sign = -1; s = s.replace(/[NSEWLO]/g, ' '); }
+  s = s.replace(/[°º'’′"”″]/g, ' ').replace(/,(?=\d)/g, '.').trim();
+  const parts = s.split(/\s+/).filter(Boolean).map(Number);
+  if (!parts.length || parts.some(x => !Number.isFinite(x))) return NaN;
+  let v = Math.abs(parts[0]) + (parts[1] || 0) / 60 + (parts[2] || 0) / 3600;
+  if (parts[0] < 0 || Object.is(parts[0], -0)) sign = -1;
+  v *= sign;
+  return Math.abs(v) <= (isLat ? 90 : 180) ? v : NaN;
+}
+function utcFromLocal(date, time, tz) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date || ''), t = /^(\d{1,2}):(\d{2})/.exec(time || '');
+  if (!m || !t) return null;
+  return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +t[1] - (ZOFF[tz] || 0), +t[2]));
+}
+function gdh(dUtc, tz) {
+  if (!dUtc) return '—';
+  const l = new Date(dUtc.getTime() + (ZOFF[tz] || 0) * 3600e3);
+  return `${pad(l.getUTCDate())}${pad(l.getUTCHours())}${pad(l.getUTCMinutes())} ${MESES[l.getUTCMonth()]} ${String(l.getUTCFullYear()).slice(2)}${tz}`;
+}
+const utcStr = d => d ? `${pad(d.getUTCDate())} ${MESES[d.getUTCMonth()]} ${d.getUTCFullYear()} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC` : '—';
+const zStr = d => d ? `${pad(d.getUTCHours())}Z ${pad(d.getUTCDate())} ${MESES[d.getUTCMonth()]} ${d.getUTCFullYear()}` : '—';
+const decYear = d => { const y = d.getUTCFullYear(), a = Date.UTC(y, 0, 1), b = Date.UTC(y + 1, 0, 1); return y + (d.getTime() - a) / (b - a); };
+
+function readInputs() {
+  const v = getVals();
+  const lat = parseCoord(v.lat, true), lon = parseCoord(v.lon, false);
+  const tUtc = utcFromLocal(v.date, v.time, v.tz);
+  const declE = (Number.isFinite(lat) && Number.isFinite(lon)) ? wmmDecl(lat, lon, 0, decYear(tUtc || new Date())) : NaN;
+  let decl = declE, declRound = v.dmode === 'auto';
+  if (v.dmode === 'manual') { decl = -num(v.dman); declRound = false; }
+  return {
+    lat, lon, tUtc, tz: v.tz, declE, model: v.model, einterp: v.einterp,
+    elev: num(v.elev), hLanc: num(v.hLanc), hCmd: num(v.hCmd),
+    ac: v.ac, acVel: num(v.acVel), arrasto: num(v.arr), nb: num(v.nb), interval: num(v.interval),
+    pq: v.pq, va: num(v.pqVa), g: num(v.pqG),
+    hOpen: num(v.hOpen), hMin: num(v.hMin), factor: num(v.factor), K: num(v.K), groundExcl: num(v.gex),
+    marginMode: v.mmode === 'planilha' ? 'planilha' : 'memento', marginManual: v.mmode === 'manual' ? num(v.mman) : 0,
+    decl, declRound, dmode: v.dmode
+  };
+}
+function validate(inp, forFetch) {
+  const e = [];
+  $('#latErr').hidden = Number.isFinite(inp.lat); $('#latErr').textContent = 'Latitude inválida';
+  $('#lonErr').hidden = Number.isFinite(inp.lon); $('#lonErr').textContent = 'Longitude inválida';
+  $('#lat').classList.toggle('bad', !Number.isFinite(inp.lat));
+  $('#lon').classList.toggle('bad', !Number.isFinite(inp.lon));
+  if (!Number.isFinite(inp.lat) || !Number.isFinite(inp.lon)) e.push('Informe latitude e longitude do alvo.');
+  if (forFetch && !inp.tUtc) e.push('Informe data e hora do lançamento.');
+  const need = [['elev', 'altitude da área'], ['hLanc', 'altura de lançamento'], ['hCmd', 'altura de comandamento'], ['acVel', 'velocidade da aeronave'], ['arrasto', 'arrasto'], ['nb', 'NB'], ['interval', 'intervalo'], ['va', 'Va do paraquedas'], ['g', 'planeio G'], ['hOpen', 'altura de abertura'], ['hMin', 'mínimo sobre o alvo'], ['factor', 'fator de segurança'], ['K', 'K'], ['groundExcl', 'exclusão de solo']];
+  for (const [k, n] of need) if (!Number.isFinite(inp[k])) e.push('Valor inválido: ' + n + '.');
+  if (Number.isFinite(inp.hLanc) && Number.isFinite(inp.hCmd) && inp.hLanc <= inp.hCmd) e.push('A altura de lançamento deve ser maior que a de comandamento.');
+  if (inp.dmode === 'manual' && !Number.isFinite(inp.decl)) e.push('Informe a declinação manual.');
+  if (inp.marginManual !== 0 && !(inp.marginManual > 0)) e.push('Informe a margem manual em metros.');
+  return e;
+}
+function updateReadouts() {
+  const inp = readInputs();
+  $('#altLanc').value = (Number.isFinite(inp.elev) && Number.isFinite(inp.hLanc)) ? String(inp.elev + inp.hLanc) : '';
+  $('#gdhRead').textContent = gdh(inp.tUtc, inp.tz);
+  $('#utcRead').textContent = inp.tUtc ? `${pad(inp.tUtc.getUTCDate())} ${MESES[inp.tUtc.getUTCMonth()]} ${pad(inp.tUtc.getUTCHours())}:${pad(inp.tUtc.getUTCMinutes())}Z` : '—';
+  if (Number.isFinite(inp.declE)) {
+    const w = -inp.declE;
+    $('#declRead').textContent = `${nf(Math.abs(w), 1)}° ${w >= 0 ? 'W' : 'E'} → usa ${inp.dmode === 'manual' ? nf(num($('#dman').value), 1) + '° W (manual)' : inp.dmode === 'exact' ? nf(w, 1) + '° W' : Math.round(w) + '° W'}`;
+  } else $('#declRead').textContent = '—';
+  $('#mmanBox').hidden = $('#mmode').value !== 'manual';
+  $('#dmanBox').hidden = $('#dmode').value !== 'manual';
+  return inp;
+}
+
+// ---------- Busca dos modelos ----------
+function setCycChip() {
+  const c = $('#cycChip'), w = curWx();
+  if (!w) { c.innerHTML = '<strong>SEM VENTOS</strong>busque os modelos'; return; }
+  const tag = both() ? ' ⇄' : '';
+  if (w.source === 'api') c.innerHTML = `<strong>${MODELS[w.model].name} ${w.init ? pad(w.init.getUTCHours()) + 'Z ' + pad(w.init.getUTCDate()) + MESES[w.init.getUTCMonth()] : ''}${tag}</strong>válido ${pad(w.valid.getUTCHours())}Z ${pad(w.valid.getUTCDate())}${MESES[w.valid.getUTCMonth()]}`;
+  else if (w.source === 'ready') c.innerHTML = '<strong>READY colado</strong>' + esc(w.readyInit || '');
+  else c.innerHTML = `<strong>MANUAL${tag}</strong>ventos digitados`;
+}
+function hostHint() {
+  return /claude|anthropic/i.test(location.hostname) ? ' Esta visualização dentro do Claude bloqueia acesso a sites externos: use o app hospedado/instalado, ou cole o windgram do READY na aba Ventos.' : ' Verifique a conexão com a internet, ou cole o windgram do READY na aba Ventos.';
+}
+async function fetchJSON(url, ms) {
+  const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), ms || 25000);
+  try {
+    const r = await fetch(url, {signal: ctl.signal, cache: 'no-store'});
+    const txt = await r.text();
+    let j = null; try { j = JSON.parse(txt); } catch (e) {}
+    if (!r.ok) throw new Error((j && j.reason) || ('HTTP ' + r.status));
+    return j;
+  } finally { clearTimeout(to); }
+}
+async function fetchMeta(mk) {
+  const j = await fetchJSON(META(MODELS[mk].meta) + '?t=' + Date.now(), 12000);
+  const init = Number(j.last_run_initialisation_time), avail = Number(j.last_run_availability_time);
+  return {init: Number.isFinite(init) ? new Date(init * 1000) : null, avail: Number.isFinite(avail) ? new Date(avail * 1000) : null};
+}
+async function fetchModel(mk, inp) {
+  const M = MODELS[mk];
+  const valid = new Date(Math.round(inp.tUtc.getTime() / 3600e3) * 3600e3);
+  const vars = [];
+  for (const p of M.levels) vars.push(`wind_speed_${p}hPa`, `wind_direction_${p}hPa`, `geopotential_height_${p}hPa`);
+  vars.push('wind_speed_10m', 'wind_direction_10m', 'wind_gusts_10m');
+  const h = `${valid.getUTCFullYear()}-${pad(valid.getUTCMonth() + 1)}-${pad(valid.getUTCDate())}T${pad(valid.getUTCHours())}:00`;
+  const q = new URLSearchParams({
+    latitude: inp.lat.toFixed(5), longitude: inp.lon.toFixed(5), models: M.api, hourly: vars.join(','),
+    wind_speed_unit: 'kn', timezone: 'GMT', start_hour: h, end_hour: h, cell_selection: 'nearest'
+  });
+  const [data, meta] = await Promise.all([fetchJSON(API + '?' + q.toString()), fetchMeta(mk).catch(() => null)]);
+  const H = data && data.hourly;
+  if (!H || !H.time || !H.time.length) throw new Error('sem dados para esse horário');
+  const winds = {}; let got = 0;
+  for (const p of M.levels) {
+    const s = H[`wind_speed_${p}hPa`] ? H[`wind_speed_${p}hPa`][0] : null;
+    const d = H[`wind_direction_${p}hPa`] ? H[`wind_direction_${p}hPa`][0] : null;
+    const g = H[`geopotential_height_${p}hPa`] ? H[`geopotential_height_${p}hPa`][0] : null;
+    if (s != null && d != null) { winds[p] = {dir: norm360(Math.round(d)), spd: Math.round(s), gh: g != null ? g / 0.3048 : null, raw: {d, s}}; got++; }
+  }
+  if (!got) throw new Error('sem ventos por nível de pressão para esse horário/local');
+  const sfc = {dir: H.wind_direction_10m ? H.wind_direction_10m[0] : null, spd: H.wind_speed_10m ? H.wind_speed_10m[0] : null, gust: H.wind_gusts_10m ? H.wind_gusts_10m[0] : null};
+  return {model: mk, source: 'api', winds, sfc, valid, init: meta ? meta.init : null, avail: meta ? meta.avail : null, exclude: new Set(),
+    gridLat: data.latitude, gridLon: data.longitude, fetched: new Date(), req: {lat: inp.lat, lon: inp.lon, t: inp.tUtc.toISOString()}};
+}
+async function doFetch(goToRes) {
+  const inp = updateReadouts();
+  const errs = validate(inp, true);
+  const box = $('#goMsg');
+  if (errs.length) { box.hidden = false; box.className = 'msg err'; box.innerHTML = '<b>Corrija antes de buscar</b>' + errs.map(esc).join('<br>'); return false; }
+  if ((inp.tUtc.getTime() - Date.now()) / 3600e3 > 15 * 24) { box.hidden = false; box.className = 'msg err'; box.innerHTML = '<b>Fora do alcance da previsão</b>GFS e ECMWF cobrem até cerca de 15 dias à frente.'; return false; }
+  const which = inp.model === 'ecmwf' ? ['ecmwf'] : inp.model === 'gfs' ? ['gfs'] : ['gfs', 'ecmwf'];
+  const btns = [$('#goBtn'), $('#refreshBtn'), $('#newCycleBtn')];
+  btns.forEach(b => b.disabled = true);
+  $('#goBtn').innerHTML = `<span class="spin" aria-hidden="true"></span>Buscando ${which.map(k => MODELS[k].name).join(' + ')}…`;
+  box.hidden = true;
+  let ok = false;
+  try {
+    const rs = await Promise.allSettled(which.map(k => fetchModel(k, inp)));
+    const fails = [];
+    const fresh = {gfs: null, ecmwf: null};
+    rs.forEach((r, i) => { if (r.status === 'fulfilled') fresh[which[i]] = r.value; else fails.push([which[i], r.reason]); });
+    if (rs.some(r => r.status === 'fulfilled')) {
+      S.sets = fresh;
+      S.active = fresh[which[0]] ? which[0] : which.find(k => fresh[k]);
+      $('#newCycle').hidden = true;
+      ok = true;
+      saveWx(); setCycChip(); recompute(); renderWx();
+      toast('Ventos carregados: ' + which.filter(k => fresh[k]).map(k => `${MODELS[k].name} ${fresh[k].init ? pad(fresh[k].init.getUTCHours()) + 'Z' : ''}`).join(' · '));
+      if (goToRes) showTab('res');
+    }
+    if (fails.length) {
+      box.hidden = false; box.className = ok ? 'msg warn' : 'msg err';
+      const why = e => (e && e.name === 'AbortError') ? 'tempo esgotado' : (e && e.message && !/Failed to fetch|NetworkError|Load failed|fetch/i.test(e.message) ? e.message : 'servidor de dados inacessível');
+      box.innerHTML = `<b>${ok ? 'Busca parcial' : 'Falha na busca automática'}</b>` + fails.map(([k, e]) => esc(`${MODELS[k].name}: ${why(e)}.`)).join('<br>') + (ok ? '' : esc(hostHint()));
+    }
+  } finally {
+    btns.forEach(b => b.disabled = false);
+    $('#goBtn').textContent = 'Buscar ventos e calcular';
+  }
+  return ok;
+}
+
+// Ventos efetivos: dados reais + níveis interpolados (ECMWF) + marcação de possível erro de previsão
+function effWinds(wx, inp) {
+  if (!wx) return {};
+  const base = (wx.model === 'ecmwf' && (inp || S.inp || {}).einterp !== 'ignore') ? fillByInterp(wx.winds, DOC_LEVELS) : Object.fromEntries(Object.entries(wx.winds).map(([k, v]) => [k, {...v}]));
+  for (let i = 0; i < DOC_LEVELS.length; i++) {
+    const w = base[DOC_LEVELS[i]]; if (!w) continue;
+    const a = base[DOC_LEVELS[i - 1]], b = base[DOC_LEVELS[i + 1]];
+    w.suspect = !!(!w.interp && a && b && w.spd >= 5 && angDiff(w.dir, a.dir) > 90 && angDiff(w.dir, b.dir) > 90);
+  }
+  return base;
+}
+function saveWx() {
+  const ser = w => w && {...w, valid: w.valid && w.valid.toISOString(), init: w.init && w.init.toISOString(), avail: w.avail && w.avail.toISOString(), fetched: w.fetched && w.fetched.toISOString(), exclude: [...(w.exclude || [])]};
+  store.set(LS_WX, {active: S.active, gfs: ser(S.sets.gfs), ecmwf: ser(S.sets.ecmwf)});
+}
+function loadWx() {
+  const o = store.get(LS_WX); if (!o) return;
+  for (const k of ['gfs', 'ecmwf']) {
+    const w = o[k]; if (!w || !w.winds) continue;
+    for (const f of ['valid', 'init', 'avail', 'fetched']) w[f] = w[f] ? new Date(w[f]) : null;
+    w.exclude = new Set(w.exclude || []);
+    S.sets[k] = w;
+  }
+  S.active = S.sets[o.active] ? o.active : (S.sets.gfs ? 'gfs' : 'ecmwf');
+}
+
+// ---------- Barra de modelo (quando GFS e ECMWF estão carregados) ----------
+function renderModelBars() {
+  for (const bar of $$('.modelbar')) {
+    bar.hidden = !both();
+    bar.innerHTML = `<span class="mlabel">Modelo exibido</span><div class="seg two" role="group" aria-label="Modelo exibido">${['gfs', 'ecmwf'].map(k => `<button type="button" data-model="${k}" aria-pressed="${S.active === k}">${MODELS[k].name}</button>`).join('')}</div>`;
+  }
+}
+function setActive(k) {
+  if (!S.sets[k] || S.active === k) return;
+  S.active = k; saveWx(); setCycChip(); renderModelBars(); renderWx(); renderRes(); renderMap();
+}
+
+// ---------- Tabela de ventos ----------
+function renderWx() {
+  renderModelBars();
+  const src = $('#srcBox');
+  const inp = S.inp || readInputs();
+  const wx = curWx();
+  if (!wx) src.innerHTML = '<dt>Status</dt><dd>Nenhum dado carregado</dd>';
+  else if (wx.source === 'api') {
+    const M = MODELS[wx.model], fh = (wx.init && wx.valid) ? Math.round((wx.valid - wx.init) / 3600e3) : null;
+    src.innerHTML = `<dt>Fonte</dt><dd>${esc(M.long)} via Open-Meteo${wx.edited ? ' · editado' : ''}</dd>
+      <dt>Ciclo</dt><dd>${wx.init ? esc(zStr(wx.init)) : 'não informado'}</dd>
+      <dt>Válido</dt><dd>${esc(utcStr(wx.valid))} · ${esc(gdh(wx.valid, inp.tz || 'P'))}${fh != null ? ` (${fh >= 0 ? '+' : ''}${fh} h)` : ''}</dd>
+      <dt>Saída</dt><dd style="font-family:var(--f-body)">${esc(M.step)}</dd>
+      <dt>Grade</dt><dd>${nf(wx.gridLat, 3)}, ${nf(wx.gridLon, 3)}</dd>
+      <dt>Obtido</dt><dd>${wx.fetched ? esc(gdh(wx.fetched, inp.tz || 'P')) : '—'}</dd>`;
+  } else if (wx.source === 'ready') src.innerHTML = `<dt>Fonte</dt><dd>Windgram READY colado${wx.edited ? ' · editado' : ''}</dd><dt>Ciclo</dt><dd>${esc(wx.readyInit || '—')}</dd><dt>Início</dt><dd>${esc(wx.readyStart || '—')}</dd>`;
+  else src.innerHTML = '<dt>Fonte</dt><dd>Digitado à mão</dd>';
+  const notes = [];
+  if (wx && wx.source === 'api') {
+    if (wx.req && (Math.abs(wx.req.lat - inp.lat) > 1e-6 || Math.abs(wx.req.lon - inp.lon) > 1e-6 || (inp.tUtc && Math.abs(new Date(wx.req.t) - inp.tUtc) > 30 * 60e3))) notes.push('O alvo ou o horário mudou depois da busca. Toque em Atualizar.');
+    if (wx.init && wx.valid && (wx.valid - wx.init) / 3600e3 > 120) notes.push('Previsão com mais de 5 dias: confiabilidade reduzida. Repita a busca mais perto do salto.');
+    if (wx.init && wx.valid && wx.valid < wx.init) notes.push('Horário anterior ao ciclo atual: valores vêm de rodadas anteriores.');
+    if (wx.model === 'ecmwf') notes.push(inp.einterp === 'ignore' ? 'ECMWF sem 975, 950, 900, 800, 750, 650 mb: essas camadas ficam fora da média (interpolação desligada).' : 'ECMWF não fornece 975, 950, 900, 800, 750, 650 mb: valores interpolados entre os níveis vizinhos (marcados “int”).');
+  }
+  if (notes.length) src.insertAdjacentHTML('beforeend', `<dt>Atenção</dt><dd style="font-family:var(--f-body);color:var(--warn)">${notes.map(esc).join('<br>')}</dd>`);
+
+  const W = effWinds(wx, inp), ex = wx ? wx.exclude : new Set();
+  const sel = selectLayers(inp.elev, inp.hLanc, inp.hCmd, inp.groundExcl);
+  const topAlt = (Number.isFinite(inp.elev) && Number.isFinite(inp.hLanc)) ? inp.elev + inp.hLanc : 20000;
+  let firstShow = 0;
+  if (!S.showAll) { for (let i = 0; i < LEVELS.length; i++) if (LEVELS[i].alt >= topAlt) firstShow = i; firstShow = Math.max(0, firstShow - 1); }
+  $('#allLvBtn').textContent = S.showAll ? 'Mostrar só níveis úteis' : 'Mostrar todos os níveis';
+  let h = '<thead><tr><th>mb</th><th>Altura ft</th><th>Dir °</th><th>Vel kt</th><th>Uso</th></tr></thead><tbody>';
+  for (let i = firstShow; i < LEVELS.length; i++) {
+    const L = LEVELS[i], s = sel[i], w = W[L.p];
+    const isEx = ex.has(L.p);
+    const cls = [s.use ? 'use-' + s.use : '', s.ground ? 'ground' : '', isEx ? 'excl' : '', w && w.interp ? 'interp' : ''].join(' ');
+    const altura = Number.isFinite(inp.elev) ? Math.max(0, L.alt - inp.elev) : null;
+    if (L.p === 1013) {
+      const sf = wx && wx.sfc;
+      const sfTxt = sf && sf.spd != null ? `${d3(norm360(Math.round(sf.dir)))}° / ${Math.round(sf.spd)} kt${sf.gust != null ? ` raj ${Math.round(sf.gust)}` : ''}` : '—';
+      h += `<tr class="ground"><td class="p">SFC<small>0 ft</small></td><td class="alt">0</td><td colspan="2"><small style="font-size:11px">vento 10 m</small>${esc(sfTxt)}</td><td><span class="chip SOLO">SOLO</span></td></tr>`;
+      continue;
+    }
+    const gh = w && w.gh ? `<small>${MODELS[wx.model || 'gfs'] ? MODELS[wx.model || 'gfs'].name : ''} ${nf(Math.round(w.gh / 10) * 10)}</small>` : (w && w.interp ? `<small>int ${w.from[0]}–${w.from[1]}</small>` : '');
+    let chip;
+    if (s.use) chip = `<button type="button" class="chip ${isEx ? 'EXC' : s.use}" data-tog="${L.p}" aria-label="${isEx ? 'Incluir' : 'Excluir'} camada ${L.p} mb">${isEx ? 'EXC' : s.use}</button>`;
+    else if (s.ground) chip = '<span class="chip SOLO">SOLO</span>';
+    else chip = '<span class="chip">—</span>';
+    h += `<tr class="${cls}"><td class="p">${L.p}${w && w.interp ? '<span class="itag">int</span>' : ''}<small>${nf(L.alt)} NOAA</small></td><td class="alt">${altura != null ? nf(altura) : '—'}${gh}</td>
+      <td><input inputmode="numeric" data-p="${L.p}" data-k="dir" value="${w ? d3(w.dir) : ''}" aria-label="Direção ${L.p} mb">${w && w.suspect ? '<span class="flag" title="Possível erro de previsão">⚠</span>' : ''}</td>
+      <td><input inputmode="numeric" data-p="${L.p}" data-k="spd" value="${w ? w.spd : ''}" aria-label="Velocidade ${L.p} mb"></td><td>${chip}</td></tr>`;
+  }
+  h += '</tbody>';
+  $('#wxTbl').innerHTML = h;
+}
+
+// ---------- Cálculo ----------
+function recompute() {
+  const inp = updateReadouts();
+  S.inp = inp;
+  store.set(LS_IN, getVals());
+  const errs = validate(inp, false);
+  for (const k of ['gfs', 'ecmwf']) {
+    const wx = S.sets[k];
+    if (!wx) { S.res[k] = null; continue; }
+    if (errs.length) { S.res[k] = {errors: errs, warnings: []}; continue; }
+    const W = effWinds(wx, inp);
+    const r = computeAll(inp, W, wx.exclude);
+    const flagged = (r.vaLayers || []).concat(r.qlLayers || []).filter(x => W[x.p] && W[x.p].suspect).map(x => x.p);
+    if (flagged.length) r.warnings.push('Possível erro de previsão em ' + flagged.join(', ') + ' mb (direção destoa das camadas vizinhas). Confira e, se for o caso, exclua a camada na aba Ventos.');
+    const ints = (r.vaLayers || []).concat(r.qlLayers || []).filter(x => W[x.p] && W[x.p].interp).map(x => x.p);
+    r.interpLayers = ints;
+    S.res[k] = r;
+  }
+  setCycChip(); renderRes(); renderMap();
+  if (!$('#v-ventos').hidden) renderWx();
+}
+
+const layerChips = (L, ints) => L.map(r => `<span${ints && ints.includes(r.p) ? ' class="int" title="interpolado"' : ''}>${r.p} · ${d3(r.dir)}°/${r.spd}${ints && ints.includes(r.p) ? '*' : ''}</span>`).join('');
+function dirFormula(o) {
+  const di = o.dirInfo;
+  return `Σ dir / n = ${nf(di.sum)} / ${o.n} = ${nf(di.avg, 2)}${di.avg > 360 ? ' − 360' : ''} → <b>${d3(o.dir)}° NV</b>${di.applied360 ? '<br>Regra dos quadrantes aplicada: +360° nos ventos do 1º quadrante.' : ''}`;
+}
+function psRows(r) {
+  const P = r.pts, a = r.az;
+  return [
+    {k: 'PSN', t: 'PS Nariz', s: `entrada ${d3(a.nariz)}° NM`, p: P.PSN},
+    {k: 'PSC', t: 'PS Cauda', s: `entrada ${d3(a.cauda)}° NM`, p: P.PSC},
+    {k: 'PSB2', t: 'PS Boca do cone', s: `entrada ${d3(a.bc1)}° NM`, p: P.PSB2},
+    {k: 'PSB1', t: 'PS Boca do cone', s: `entrada ${d3(a.bc2)}° NM`, p: P.PSB1},
+    {k: 'PSP', t: 'Fim da queda livre', s: 'PSP', p: P.PSP},
+    {k: 'PA', t: 'Fim do velame aberto', s: 'ponto de abertura', p: P.PA}
+  ];
+}
+const cstr = p => `${p[0].toFixed(6)}, ${p[1].toFixed(6)}`;
+function distM(a, b) {
+  const R = 6371008.8, r = Math.PI / 180, dLat = (b[0] - a[0]) * r, dLon = (b[1] - a[1]) * r;
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+const okRes = r => r && !(r.errors && r.errors.length) && r.pts;
+
+function compareCard() {
+  const g = S.res.gfs, e = S.res.ecmwf;
+  if (!okRes(g) || !okRes(e)) return '';
+  const row = (k, a, b, dlt, warn) => `<tr${warn ? ' class="dv"' : ''}><th>${k}</th><td>${a}</td><td>${b}</td><td>${dlt}</td></tr>`;
+  const dd = (x, y) => Math.round(angDiff(x, y));
+  const dvVA = dd(g.VA.dir, e.VA.dir), dvQL = dd(g.QL.dir, e.QL.dir);
+  const ps = [['Dist. PS nariz', 'PSN'], ['Dist. PS cauda', 'PSC'], [`Dist. PS BC ${d3(g.az.bc1)}`, 'PSB2'], [`Dist. PS BC ${d3(g.az.bc2)}`, 'PSB1']].map(([n, k]) => [n, distM(g.pts[k], e.pts[k])]);
+  const maxPs = Math.max(...ps.map(x => x[1]));
+  let h = `<div class="card"><h3>Comparação GFS × ECMWF</h3>
+    <div class="tblwrap"><table class="cmp"><thead><tr><th></th><th>GFS</th><th>ECMWF</th><th>Δ</th></tr></thead><tbody>
+    ${row('Ciclo', S.sets.gfs.init ? pad(S.sets.gfs.init.getUTCHours()) + 'Z' : '—', S.sets.ecmwf.init ? pad(S.sets.ecmwf.init.getUTCHours()) + 'Z' : '—', '')}
+    ${row('VA dist.', nf(g.VA.D) + ' m', nf(e.VA.D) + ' m', nf(Math.abs(g.VA.D - e.VA.D)) + ' m')}
+    ${row('VA dir.', d3(g.VA.dir) + '°', d3(e.VA.dir) + '°', dvVA + '°', dvVA > 20)}
+    ${row('W médio', nf(g.VA.W, 1) + ' kt', nf(e.VA.W, 1) + ' kt', nf(Math.abs(g.VA.W - e.VA.W), 1) + ' kt')}
+    ${row('QL dist.', nf(g.QL.D) + ' m', nf(e.QL.D) + ' m', nf(Math.abs(g.QL.D - e.QL.D)) + ' m')}
+    ${row('QL dir.', d3(g.QL.dir) + '°', d3(e.QL.dir) + '°', dvQL + '°', dvQL > 20)}
+    ${row('Entrada nariz', d3(g.az.nariz) + '°', d3(e.az.nariz) + '°', dd(g.az.nariz, e.az.nariz) + '°')}
+    ${ps.map(([n, d]) => row(n, '', '', nf(d) + ' m', d === maxPs && d > 300)).join('')}
+    </tbody></table></div>
+    <p class="hint">Distância entre os pontos de saída calculados por cada modelo. Diferenças grandes indicam incerteza na previsão; prefira repetir a busca mais perto do salto e confirmar com o vento observado.${(e.interpLayers || []).length ? ' No ECMWF, camadas interpoladas: ' + e.interpLayers.slice().sort((x, y) => x - y).join(', ') + ' mb.' : ''}</p></div>`;
+  return h;
+}
+
+function renderRes() {
+  renderModelBars();
+  const box = $('#resBox'), r = curRes(), inp = S.inp, wx = curWx();
+  const anyIssue = ['gfs', 'ecmwf'].some(k => S.res[k] && ((S.res[k].errors && S.res[k].errors.length) || (S.res[k].warnings && S.res[k].warnings.length)));
+  $('#resDot').hidden = !anyIssue;
+  if (!wx) { box.innerHTML = `<div class="card empty"><b>Sem ventos carregados</b>Preencha a missão e toque em “Buscar ventos e calcular”, ou cole o windgram do READY na aba Ventos.</div>`; return; }
+  if (!r) { box.innerHTML = ''; return; }
+  let h = '';
+  if (r.errors && r.errors.length) h += `<div class="msg err"><b>Não foi possível calcular</b>${r.errors.map(esc).join('<br>')}</div>`;
+  if (r.warnings && r.warnings.length) h += `<div class="msg warn"><b>Atenção</b>${r.warnings.map(esc).join('<br>')}</div>`;
+  if (r.errors && r.errors.length) { box.innerHTML = h; return; }
+  const a = r.az, VA = r.VA, QL = r.QL;
+  const declTxt = `${nf(Math.abs(r.declW), inp.declRound ? 0 : 1)}° ${r.declW >= 0 ? 'W' : 'E'}`;
+  const mName = wx.source === 'api' ? MODELS[wx.model].name : wx.source === 'ready' ? 'READY' : 'manual';
+  h += `<div class="entries">
+    <div class="entry"><span class="k">Nariz</span><span class="v">${d3(a.nariz)}°<small>NM</small></span><span class="s">ANV contra o vento</span></div>
+    <div class="entry"><span class="k">Cauda</span><span class="v">${d3(a.cauda)}°<small>NM</small></span><span class="s">ANV a favor do vento</span></div>
+    <div class="entry wide"><span class="k">Boca do cone</span><span class="v">${d3(a.bc1)}° · ${d3(a.bc2)}°<small>NM</small></span><span class="s">ANV perpendicular ao vento do velame aberto</span></div>
+    <div class="entry wide"><span class="k">AZ magnético nav. paraquedista</span><span class="v">${d3(a.navPqdt)}°<small>NM</small></span><span class="s">contra-azimute do VA + declinação ${declTxt} · ventos ${esc(mName)}</span></div>
+  </div>`;
+  h += `<div class="card"><h3><span class="swatch" style="background:var(--va)"></span>Velame aberto</h3>
+    <div class="big"><span class="n">${nf(VA.D, 2)}<small> m</small></span><span class="n">${d3(VA.dir)}°<small> NV</small></span></div>
+    <div class="sub">Camadas (${VA.n})</div><div class="layers">${layerChips(r.vaLayers, r.interpLayers)}</div>
+    <dl class="kv"><dt>W = Σ vel / n</dt><dd>${nf(VA.W, 2)} kt</dd><dt>Paraquedas</dt><dd>${esc(inp.pq)} · ${nf(inp.va, 2)} kt · G ${nf(inp.g, 2)}</dd><dt>Vv</dt><dd>${nf(VA.vv, 2)} ft/s (${nf(VA.vvMs, 2)} m/s)</dd><dt>Δh</dt><dd>${nf(inp.hOpen)} − ${nf(inp.hMin)} = ${nf(VA.dh)} ft</dd><dt>Tempo sob velame</dt><dd>${nf(VA.t, 1)} s</dd></dl>
+    <div class="formula">D = (Δh/Vv)·(Va − W)·${nf(inp.factor, 2)}<br>= (${nf(VA.dh)} / ${nf(VA.vv, 3)}) × (${nf(inp.va, 2)} − ${nf(VA.W, 2)}) kt × 1,68781 × 0,3048 × ${nf(inp.factor, 2)} = <b>${nf(VA.D, 2)} m</b><br>${dirFormula(VA)}</div>
+  </div>`;
+  h += `<div class="card"><h3><span class="swatch" style="background:var(--ql)"></span>Queda livre</h3>
+    <div class="big"><span class="n">${nf(QL.D, 2)}<small> m</small></span><span class="n">${d3(QL.dir)}°<small> NV</small></span></div>
+    <div class="sub">Camadas (${QL.n})</div><div class="layers">${layerChips(r.qlLayers, r.interpLayers)}</div>
+    <dl class="kv"><dt>V = Σ vel / n</dt><dd>${nf(QL.V, 2)} kt</dd><dt>A = (lçt − cmdo)/1000</dt><dd>(${nf(inp.hLanc)} − ${nf(inp.hCmd)})/1000 = ${nf(QL.A, 1)}</dd></dl>
+    <div class="formula">D = K·V·A = ${nf(inp.K, 2)} × ${nf(QL.V, 2)} × ${nf(QL.A, 2)} = <b>${nf(QL.D, 2)} m</b><br>${dirFormula(QL)}</div>
+  </div>`;
+  if ((r.interpLayers || []).length) h += `<p class="hint" style="margin-top:-6px">* camada interpolada entre níveis vizinhos do ECMWF.</p>`;
+  h += compareCard();
+  h += `<div class="card"><h3>Lançamento</h3>
+    <dl class="kv">
+      <dt>Declinação magnética ZL</dt><dd>${declTxt}${inp.dmode !== 'manual' && Number.isFinite(inp.declE) ? ` <span style="color:var(--muted);font-weight:500">(WMM ${nf(-inp.declE, 2)}°)</span>` : ''}</dd>
+      <dt>Arrasto ${esc(inp.ac === 'OUTRA' ? '' : inp.ac)}</dt><dd>${nf(r.arrasto)} m</dd>
+      <dt>Dispersão nariz = NB·I·Vel</dt><dd>${nf(inp.nb)}·${nf(inp.interval)}·${nf(inp.acVel)} = ${nf(r.dispNariz)} m</dd>
+      <dt>Dispersão boca do cone</dt><dd>${nf(r.dispBC)} m</dd>
+      <dt>Margem de segurança</dt><dd>${nf(r.margem)} m</dd>
+      <dt>Perpendicular ao VA (traçar BC)</dt><dd>${d3(a.perp1)}° / ${d3(a.perp2)}° NV</dd>
+      <dt>Contra-azimute do VA</dt><dd>${d3(a.contraVA)}° NV</dd>
+      <dt>Altitude de lançamento</dt><dd>${nf(inp.elev + inp.hLanc)} ft</dd>
+    </dl></div>`;
+  h += `<div class="card"><h3>Pontos de saída · ${esc(mName)}</h3><div class="pslist">${psRows(r).map(x => `<div class="ps"><span class="t">${x.t}<em>${x.s}</em></span><span class="c">${cstr(x.p)}</span><span class="b"><button class="btn small" type="button" data-copy="${cstr(x.p)}">Copiar</button><a class="btn small" href="https://www.google.com/maps/search/?api=1&query=${x.p[0].toFixed(6)},${x.p[1].toFixed(6)}" target="_blank" rel="noopener">Maps</a></span></div>`).join('')}</div></div>`;
+  h += `<div class="card"><h3>Enviar</h3><p class="hint">Resumo em texto para o piloto/mestre de salto, e arquivo KML com o traçado padronizado para abrir no Google Earth${both() ? ' (traz GFS e ECMWF em pastas separadas)' : ''}.</p>
+    <div class="btnrow"><button class="btn" type="button" id="copySum">Copiar resumo</button>${navigator.share ? '<button class="btn" type="button" id="shareSum">Compartilhar</button>' : ''}<button class="btn" type="button" id="kmlBtn">Exportar KML</button></div></div>`;
+  box.innerHTML = h;
+}
+
+function srcLine(k) {
+  const w = S.sets[k];
+  if (!w) return '';
+  if (w.source === 'api') return `${MODELS[k].long} ciclo ${w.init ? zStr(w.init) : '—'}, válido ${pad(w.valid.getUTCHours())}Z${w.init ? ` (+${Math.round((w.valid - w.init) / 3600e3)} h)` : ''}`;
+  return w.source === 'ready' ? `READY ${w.readyInit || ''}` : 'ventos digitados';
+}
+function summaryText() {
+  const r = curRes(), inp = S.inp, a = r.az;
+  const L = x => x.map(l => l.p).join('/');
+  const lines = [
+    `LANÇAMENTO SALTO LIVRE — GDH ${gdh(inp.tUtc, inp.tz)}`,
+    `Alvo: ${cstr([inp.lat, inp.lon])} | Área ${nf(inp.elev)} ft`,
+    `Lçt ${nf(inp.hLanc)} ft (${nf(inp.elev + inp.hLanc)} ft MSL) | Cmdo ${nf(inp.hCmd)} ft`,
+    `ANV ${inp.ac} | NB ${inp.nb} | I ${inp.interval} s | Pqd ${inp.pq}`,
+    `Ventos: ${srcLine(S.active)}`,
+    `VA: ${nf(r.VA.D, 0)} m / ${d3(r.VA.dir)}° NV (W ${nf(r.VA.W, 1)} kt; ${L(r.vaLayers)} mb)`,
+    `QL: ${nf(r.QL.D, 0)} m / ${d3(r.QL.dir)}° NV (V ${nf(r.QL.V, 1)} kt; ${L(r.qlLayers)} mb)`,
+    `Decl ${nf(Math.abs(r.declW), inp.declRound ? 0 : 1)}° ${r.declW >= 0 ? 'W' : 'E'} | Arrasto ${nf(r.arrasto)} m | Disp nariz ${nf(r.dispNariz)} m | BC ${nf(r.dispBC)} m | Margem ${nf(r.margem)} m`,
+    `ENTRADAS (NM): NARIZ ${d3(a.nariz)} | CAUDA ${d3(a.cauda)} | BOCA CONE ${d3(a.bc1)} / ${d3(a.bc2)}`,
+    `AZ NAV PQDT: ${d3(a.navPqdt)}° NM`,
+    `PS NARIZ (${d3(a.nariz)}): ${cstr(r.pts.PSN)}`,
+    `PS CAUDA (${d3(a.cauda)}): ${cstr(r.pts.PSC)}`,
+    `PS BC (${d3(a.bc1)}): ${cstr(r.pts.PSB2)}`,
+    `PS BC (${d3(a.bc2)}): ${cstr(r.pts.PSB1)}`
+  ];
+  const o = S.res[other()];
+  if (both() && okRes(o)) {
+    lines.push(`— Comparação ${MODELS[other()].name} (${srcLine(other())}):`,
+      `VA ${nf(o.VA.D, 0)} m / ${d3(o.VA.dir)}° | QL ${nf(o.QL.D, 0)} m / ${d3(o.QL.dir)}° | NARIZ ${d3(o.az.nariz)} | CAUDA ${d3(o.az.cauda)} | BC ${d3(o.az.bc1)}/${d3(o.az.bc2)}`,
+      `Dif. PS nariz ${nf(distM(r.pts.PSN, o.pts.PSN))} m · cauda ${nf(distM(r.pts.PSC, o.pts.PSC))} m`);
+  }
+  if (r.warnings.length) lines.push('ATENÇÃO: ' + r.warnings.join(' '));
+  return lines.join('\n');
+}
+
+// ---------- KML ----------
+function kml() {
+  const inp = S.inp;
+  const c = p => `${p[1].toFixed(7)},${p[0].toFixed(7)},0`;
+  const line = (name, st, pts) => `<Placemark><name>${esc(name)}</name><styleUrl>#${st}</styleUrl><LineString><tessellate>1</tessellate><coordinates>${pts.map(c).join(' ')}</coordinates></LineString></Placemark>`;
+  const pt = (name, p, st) => `<Placemark><name>${esc(name)}</name><styleUrl>#${st || 'pt'}</styleUrl><Point><coordinates>${c(p)}</coordinates></Point></Placemark>`;
+  const sty = (id, col) => `<Style id="${id}"><LineStyle><color>${col}</color><width>4</width></LineStyle></Style>`;
+  const folders = (r, tag) => {
+    const P = r.pts, a = r.az;
+    const base = line('Velame aberto ' + nf(r.VA.D, 0) + ' m', 'va', [P.T, P.PA]) + line('Queda livre ' + nf(r.QL.D, 0) + ' m', 'ql', [P.PA, P.PSP]);
+    return `<Folder><name>Nariz — entrada ${d3(a.nariz)}° NM${tag}</name>${base}${line('Dispersão ' + nf(r.dispNariz) + ' m', 'disp', [P.PSP, P.nDisp])}${line('Arrasto ' + nf(r.arrasto) + ' m', 'arr', [P.nDisp, P.PSN])}${pt('PS Nariz ' + d3(a.nariz) + '°' + tag, P.PSN)}</Folder>
+<Folder><name>Cauda — entrada ${d3(a.cauda)}° NM${tag}</name>${base}${line('Arrasto ' + nf(r.arrasto) + ' m', 'arr', [P.PSP, P.PSC])}${pt('PS Cauda ' + d3(a.cauda) + '°' + tag, P.PSC)}</Folder>
+<Folder><name>Boca do cone — entradas ${d3(a.bc1)}° / ${d3(a.bc2)}° NM${tag}</name>${base}${line('Margem de segurança ' + nf(r.margem) + ' m', 'mg', [P.PSP, P.MC])}${line('Dispersão ' + nf(r.dispNariz) + ' m', 'disp', [P.y2, P.y1])}${line('Arrasto', 'arr', [P.y1, P.PSB1])}${line('Arrasto', 'arr', [P.y2, P.PSB2])}${pt('PS BC ' + d3(a.bc1) + '°' + tag, P.PSB2)}${pt('PS BC ' + d3(a.bc2) + '°' + tag, P.PSB1)}</Folder>`;
+  };
+  const ks = ['gfs', 'ecmwf'].filter(k => okRes(S.res[k]));
+  const order = [S.active, ...ks.filter(k => k !== S.active)].filter(k => ks.includes(k));
+  const body = order.length > 1
+    ? order.map((k, i) => `<Folder><name>${MODELS[k].name} — ${esc(srcLine(k))}</name><visibility>${i === 0 ? 1 : 0}</visibility>${folders(S.res[k], ' (' + MODELS[k].name + ')')}</Folder>`).join('\n')
+    : folders(curRes(), '');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Lançamento ${esc(gdh(inp.tUtc, inp.tz))}</name>
+${sty('va', 'ff2b26e0')}${sty('ql', 'ffffffff')}${sty('mg', 'ff000000')}${sty('disp', 'ff00c4f5')}${sty('arr', 'ffe07a1f')}
+<Style id="pt"><IconStyle><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>
+<Style id="alvo"><IconStyle><scale>1.2</scale><Icon><href>http://maps.google.com/mapfiles/kml/shapes/target.png</href></Icon></IconStyle></Style>
+${pt('Alvo', [inp.lat, inp.lon], 'alvo')}
+${body}
+</Document></kml>`;
+}
+async function exportKml() {
+  if (!okRes(curRes())) return toast('Calcule o lançamento primeiro.');
+  const txt = kml(), name = 'lancamento_' + gdh(S.inp.tUtc, S.inp.tz).replace(/\s/g, '_') + '.kml';
+  try {
+    const blob = new Blob([txt], {type: 'application/vnd.google-earth.kml+xml'});
+    if (navigator.canShare && navigator.share) {
+      const f = new File([blob], name, {type: blob.type});
+      if (navigator.canShare({files: [f]})) { await navigator.share({files: [f], title: name}); return; }
+    }
+    const u = URL.createObjectURL(blob), aEl = document.createElement('a');
+    aEl.href = u; aEl.download = name; document.body.appendChild(aEl); aEl.click(); aEl.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 4000);
+    if (/claude|anthropic/i.test(location.hostname)) showCopyModal(txt, 'Download bloqueado nesta visualização. Copie o KML e salve como arquivo .kml.');
+    else toast('KML gerado: ' + name);
+  } catch (e) { if (e && e.name !== 'AbortError') showCopyModal(txt, 'Copie o KML e salve como arquivo .kml.'); }
+}
+
+// ---------- Esquema (SVG) ----------
+function features(r, mode) {
+  const P = r.pts, a = r.az, F = [];
+  const L = (cls, pts) => F.push({t: 'l', cls, pts});
+  const M = (p, label, kind, hdg) => F.push({t: 'p', p, label, kind, hdg});
+  L('va', [P.T, P.PA]); L('ql', [P.PA, P.PSP]);
+  const d = r.VA.dir;
+  if (mode === 'nariz' || mode === 'todos') { L('disp', [P.PSP, P.nDisp]); L('arr', [P.nDisp, P.PSN]); M(P.PSN, `PS NARIZ ${d3(a.nariz)}°`, 'ps', d); }
+  if (mode === 'cauda' || mode === 'todos') { L('arr', [P.PSP, P.PSC]); M(P.PSC, `PS CAUDA ${d3(a.cauda)}°`, 'ps', d + 180); }
+  if (mode === 'bc' || mode === 'todos') { L('mg', [P.PSP, P.MC]); L('disp', [P.y2, P.y1]); L('arr', [P.y1, P.PSB1]); L('arr', [P.y2, P.PSB2]); M(P.PSB2, `PS BC ${d3(a.bc1)}°`, 'ps', d + 90); M(P.PSB1, `PS BC ${d3(a.bc2)}°`, 'ps', d + 270); }
+  M(P.PA, 'ABERTURA', 'aux'); M(P.PSP, 'FIM QL', 'aux'); M(P.T, 'ALVO', 'alvo');
+  return F;
+}
+const COL = {va: '#E0262B', ql: '#FFFFFF', mg: '#000000', disp: '#F5C400', arr: '#1F7AE0'};
+function renderMap() {
+  renderModelBars();
+  const box = $('#schem'), r = curRes();
+  const ov = both() && S.overlay && okRes(S.res[other()]) ? S.res[other()] : null;
+  $('#ovRow').hidden = !both();
+  $('#ovChk').checked = S.overlay;
+  $('#ovName').textContent = MODELS[other()].name;
+  if (!okRes(r)) { box.innerHTML = `<svg viewBox="0 0 360 360" role="img" aria-label="Sem cálculo"><rect width="360" height="360" fill="#56664A"/><text x="180" y="185" fill="#E9EEDF" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-size="16" font-weight="700" text-anchor="middle" letter-spacing="1">CALCULE O LANÇAMENTO</text></svg>`; return; }
+  const F = features(r, S.mapMode), F2 = ov ? features(ov, S.mapMode) : [], P0 = r.pts.T;
+  const kx = Math.cos(P0[0] * Math.PI / 180) * 111320, ky = 110574;
+  const xy = p => [(p[1] - P0[1]) * kx, (p[0] - P0[0]) * ky];
+  const all = []; F.concat(F2).forEach(f => f.t === 'l' ? f.pts.forEach(p => all.push(xy(p))) : all.push(xy(f.p)));
+  const x0 = Math.min(...all.map(v => v[0])), x1 = Math.max(...all.map(v => v[0])), y0 = Math.min(...all.map(v => v[1])), y1 = Math.max(...all.map(v => v[1]));
+  const W = 360, Hh = 360, padP = 46;
+  const span = Math.max(x1 - x0, y1 - y0, 200);
+  const sc = (W - 2 * padP) / span, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const T = v => [W / 2 + (v[0] - cx) * sc, Hh / 2 - (v[1] - cy) * sc];
+  let s = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Esquema do lançamento"><defs><pattern id="g" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#ffffff" stroke-opacity=".07"/></pattern></defs><rect width="${W}" height="${Hh}" fill="#56664A"/><rect width="${W}" height="${Hh}" fill="url(#g)"/>`;
+  // outro modelo (tracejado, por baixo)
+  for (const f of F2.filter(f => f.t === 'l')) {
+    const pts = f.pts.map(p => T(xy(p)).map(n => n.toFixed(1)).join(',')).join(' ');
+    s += `<polyline points="${pts}" fill="none" stroke="${COL[f.cls]}" stroke-opacity=".85" stroke-width="1.8" stroke-dasharray="5 4" stroke-linecap="round"/>`;
+  }
+  for (const f of F2.filter(f => f.t === 'p' && f.kind === 'ps')) { const [x, y] = T(xy(f.p)); s += `<circle cx="${x}" cy="${y}" r="5" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="2 2"/>`; }
+  for (const f of F.filter(f => f.t === 'l')) {
+    const pts = f.pts.map(p => T(xy(p)).map(n => n.toFixed(1)).join(',')).join(' ');
+    const halo = (f.cls === 'mg') ? '#E9EEDF' : '#151912';
+    s += `<polyline points="${pts}" fill="none" stroke="${halo}" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/><polyline points="${pts}" fill="none" stroke="${COL[f.cls]}" stroke-width="3.2" stroke-linecap="round"/>`;
+  }
+  for (const f of F.filter(f => f.t === 'p')) {
+    const [x, y] = T(xy(f.p));
+    if (f.kind === 'alvo') s += `<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="${x}" cy="${y}" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="${x}" cy="${y}" r="1.6" fill="#fff"/>`;
+    else if (f.kind === 'ps') {
+      const rad = f.hdg * Math.PI / 180, ux = Math.sin(rad), uy = -Math.cos(rad);
+      const ax = x - ux * 30, ay = y - uy * 30, tx = x - ux * 9, ty = y - uy * 9, px = -uy, py = ux;
+      s += `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3"/>`;
+      s += `<path d="M${tx.toFixed(1)} ${ty.toFixed(1)} L${(tx - ux * 8 + px * 4.5).toFixed(1)} ${(ty - uy * 8 + py * 4.5).toFixed(1)} L${(tx - ux * 8 - px * 4.5).toFixed(1)} ${(ty - uy * 8 - py * 4.5).toFixed(1)}Z" fill="#fff"/>`;
+      s += `<circle cx="${x}" cy="${y}" r="6.5" fill="#fff" stroke="#151912" stroke-width="2"/><circle cx="${x}" cy="${y}" r="2.2" fill="#151912"/>`;
+    } else s += `<circle cx="${x}" cy="${y}" r="3.6" fill="#E9EEDF" stroke="#151912" stroke-width="1.4"/>`;
+    const right = x < W * 0.62, lx = x + (right ? 11 : -11), anchor = right ? 'start' : 'end';
+    const ly = f.label === 'ABERTURA' ? y + 15 : f.label === 'FIM QL' ? y - 8 : y + 4;
+    s += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="${f.kind === 'aux' ? 10.5 : 12.5}" letter-spacing=".5" fill="#fff" stroke="#151912" stroke-width="3" stroke-opacity=".75" paint-order="stroke">${esc(f.label)}</text>`;
+  }
+  const nice = [50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000];
+  const target = (W * 0.28) / sc; let L = nice[0]; for (const n of nice) if (n <= target) L = n;
+  const lp = L * sc;
+  s += `<g font-family="JetBrains Mono,monospace" font-size="10" fill="#fff"><rect x="12" y="${Hh - 30}" width="${lp.toFixed(1)}" height="5" fill="#fff"/><rect x="12" y="${Hh - 30}" width="${(lp / 2).toFixed(1)}" height="5" fill="#151912"/><text x="12" y="${Hh - 14}" stroke="#151912" stroke-width="3" stroke-opacity=".7" paint-order="stroke">${L >= 1000 ? (L / 1000) + ' km' : L + ' m'}</text></g>`;
+  s += `<g transform="translate(${W - 26},30)"><path d="M0 -16 L7 6 L0 1 L-7 6Z" fill="#fff" stroke="#151912" stroke-width="1.2"/><text y="20" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="12" fill="#fff">NV</text></g>`;
+  const mn = curWx() && curWx().source === 'api' ? MODELS[curWx().model].name + ' · ' : '';
+  s += `<text x="12" y="20" font-family="Barlow Condensed,sans-serif" font-weight="700" font-size="12" letter-spacing="1" fill="#fff" stroke="#151912" stroke-width="3" stroke-opacity=".6" paint-order="stroke">${esc(mn)}VENTO VA ${d3(r.VA.dir)}° · QL ${d3(r.QL.dir)}°</text>`;
+  if (ov) s += `<text x="12" y="36" font-family="Barlow Condensed,sans-serif" font-weight="600" font-size="11" letter-spacing=".5" fill="#fff" stroke="#151912" stroke-width="3" stroke-opacity=".6" paint-order="stroke">tracejado: ${esc(MODELS[other()].name)} (VA ${d3(ov.VA.dir)}° · QL ${d3(ov.QL.dir)}°)</text>`;
+  s += '</svg>';
+  box.innerHTML = s;
+  if (S.sat && S.sat.map) drawSat();
+}
+
+// ---------- Satélite (Leaflet sob demanda) ----------
+function loadLeaflet() {
+  return new Promise((res, rej) => {
+    if (window.L) return res(window.L);
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    sc.onload = () => window.L ? res(window.L) : rej(new Error('Leaflet'));
+    sc.onerror = () => rej(new Error('Leaflet'));
+    document.head.appendChild(sc);
+  });
+}
+async function showSat() {
+  if (!okRes(curRes())) return toast('Calcule o lançamento primeiro.');
+  const msg = $('#satMsg');
+  msg.textContent = 'Carregando imagem de satélite…';
+  try {
+    const L = await loadLeaflet();
+    $('#sat').hidden = false;
+    if (!S.sat) {
+      const map = L.map('sat', {zoomControl: true, attributionControl: true});
+      let ok = 0, bad = 0;
+      const tl = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19, attribution: 'Imagens © Esri, Maxar, Earthstar Geographics'});
+      tl.on('tileload', () => { ok++; msg.textContent = 'Arraste e amplie com dois dedos.'; });
+      tl.on('tileerror', () => { bad++; if (!ok && bad > 3) msg.textContent = 'As imagens de satélite não carregaram (sem internet ou acesso bloqueado nesta visualização). O traçado continua no esquema acima e no KML.'; });
+      tl.addTo(map);
+      S.sat = {map, layer: L.layerGroup().addTo(map)};
+    }
+    drawSat();
+    setTimeout(() => S.sat.map.invalidateSize(), 60);
+  } catch (e) {
+    msg.textContent = 'Não foi possível carregar o mapa de satélite (sem internet ou acesso bloqueado nesta visualização). Use o esquema acima ou exporte o KML.';
+  }
+}
+function drawSat() {
+  const L = window.L, r = curRes(); if (!L || !S.sat || !okRes(r)) return;
+  const g = S.sat.layer; g.clearLayers();
+  const F = features(r, S.mapMode), b = [];
+  const ov = both() && S.overlay && okRes(S.res[other()]) ? S.res[other()] : null;
+  if (ov) for (const f of features(ov, S.mapMode).filter(f => f.t === 'l')) L.polyline(f.pts, {color: COL[f.cls], weight: 2, opacity: .9, dashArray: '6 5'}).addTo(g);
+  for (const f of F.filter(f => f.t === 'l')) {
+    L.polyline(f.pts, {color: f.cls === 'mg' ? '#ffffff' : '#000000', weight: 7, opacity: .45}).addTo(g);
+    L.polyline(f.pts, {color: COL[f.cls], weight: 4, opacity: 1}).addTo(g);
+    f.pts.forEach(p => b.push(p));
+  }
+  for (const f of F.filter(f => f.t === 'p')) {
+    const m = L.circleMarker(f.p, {radius: f.kind === 'aux' ? 4 : 7, color: '#111', weight: 2, fillColor: '#fff', fillOpacity: 1}).addTo(g);
+    if (f.kind !== 'aux') m.bindTooltip(f.label, {permanent: true, direction: 'right', offset: [8, 0], className: 'ltip'});
+    b.push(f.p);
+  }
+  S.sat.map.fitBounds(b, {padding: [36, 36]});
+}
+
+// ---------- READY colado / manual ----------
+function applyPaste() {
+  const r = parseReady($('#pasteTxt').value);
+  if (!r.n) return toast('Nenhuma linha “NNN.mb DDD@VVV” encontrada.');
+  const winds = {};
+  for (const [p, w] of Object.entries(r.winds)) winds[p] = {dir: norm360(w.dir), spd: w.spd};
+  S.sets = {gfs: {model: 'gfs', source: 'ready', winds, sfc: null, readyInit: r.init, readyStart: r.start, fetched: new Date(), exclude: new Set()}, ecmwf: null};
+  S.active = 'gfs';
+  $('#pasteBox').hidden = true;
+  saveWx(); recompute(); renderWx();
+  toast(r.n + ' níveis aplicados (coluna +0 h).');
+}
+function startManual() {
+  if (!curWx()) { S.sets = {gfs: {model: 'gfs', source: 'manual', winds: {}, sfc: null, fetched: new Date(), exclude: new Set()}, ecmwf: null}; S.active = 'gfs'; }
+  else curWx().edited = true;
+  recompute(); renderWx();
+  const f = $('#wxTbl tr.use-VA input, #wxTbl tr.use-QL input'); if (f) f.focus();
+}
+
+// ---------- UI util ----------
+let toastT;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 2600); }
+function copyText(t) {
+  const fallback = () => showCopyModal(t, 'Selecione e copie o texto abaixo.');
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => toast('Copiado'), fallback);
+    else fallback();
+  } catch (e) { fallback(); }
+}
+function showCopyModal(t, note) {
+  let m = $('#copyModal');
+  if (!m) {
+    m = document.createElement('div'); m.id = 'copyModal';
+    m.style.cssText = 'position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px';
+    m.innerHTML = '<div class="card" style="width:100%;max-width:640px;max-height:80vh"><h3 id="cmT"></h3><textarea id="cmX" readonly style="min-height:240px"></textarea><div class="btnrow"><button class="btn" type="button" id="cmC">Fechar</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m || e.target.id === 'cmC') m.hidden = true; });
+  }
+  $('#cmT').textContent = note; $('#cmX').value = t; m.hidden = false;
+  setTimeout(() => { const x = $('#cmX'); x.focus(); x.select(); }, 30);
+}
+function showTab(v) {
+  for (const b of $$('.tabs button')) b.setAttribute('aria-selected', String(b.dataset.v === v));
+  for (const s of $$('.view')) s.hidden = s.id !== 'v-' + v;
+  if (v === 'ventos') renderWx();
+  if (v === 'mapa') { renderMap(); if (S.sat) setTimeout(() => S.sat.map.invalidateSize(), 60); }
+  window.scrollTo({top: 0});
+}
+
+// ---------- Novo ciclo ----------
+async function checkNewCycle() {
+  if (document.hidden) return;
+  const ks = ['gfs', 'ecmwf'].filter(k => S.sets[k] && S.sets[k].source === 'api' && S.sets[k].init);
+  const news = [];
+  for (const k of ks) {
+    try { const m = await fetchMeta(k); if (m.init && m.init.getTime() > S.sets[k].init.getTime()) news.push(`${MODELS[k].name} ${zStr(m.init)}`); } catch (e) {}
+  }
+  if (news.length) { $('#newCycleTxt').textContent = 'Novo ciclo disponível: ' + news.join(' · ') + '.'; $('#newCycle').hidden = false; }
+}
+
+// ---------- Eventos ----------
+function bind() {
+  let deb;
+  const onIn = () => { clearTimeout(deb); deb = setTimeout(recompute, 180); };
+  for (const k of FIELDS) { const el = document.getElementById(k); if (!el) continue; el.addEventListener('input', onIn); el.addEventListener('change', onIn); }
+  $('#ac').addEventListener('change', () => { const a = AIRCRAFT.find(x => x.id === $('#ac').value); if (a) { $('#acVel').value = a.vel; $('#arr').value = a.arr; } recompute(); });
+  $('#pq').addEventListener('change', () => { const p = PARACHUTES.find(x => x.id === $('#pq').value); if (p) { $('#pqVa').value = p.va; $('#pqG').value = p.g; } recompute(); });
+  for (const id of ['lat', 'lon']) {
+    $('#' + id).addEventListener('paste', e => {
+      const t = (e.clipboardData || window.clipboardData).getData('text');
+      const m = /^\s*\(?\s*(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)\s*\)?\s*$/.exec(t || '');
+      if (m) { e.preventDefault(); $('#lat').value = m[1]; $('#lon').value = m[2]; recompute(); toast('Latitude e longitude preenchidas'); }
+    });
+  }
+  $('#gpsBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) return toast('GPS indisponível neste navegador.');
+    toast('Obtendo posição…');
+    navigator.geolocation.getCurrentPosition(p => { $('#lat').value = p.coords.latitude.toFixed(6); $('#lon').value = p.coords.longitude.toFixed(6); recompute(); toast('Posição atual aplicada ao alvo'); },
+      () => toast('Posição não autorizada ou indisponível.'), {enableHighAccuracy: true, timeout: 15000});
+  });
+  $('#goBtn').addEventListener('click', () => doFetch(true));
+  $('#refreshBtn').addEventListener('click', () => doFetch(false).then(ok => { if (!ok || !$('#goMsg').hidden) showTab('missao'); }));
+  $('#newCycleBtn').addEventListener('click', () => doFetch(false));
+  $('#pasteBtn').addEventListener('click', () => { $('#pasteBox').hidden = false; $('#pasteTxt').focus(); });
+  $('#pasteCancel').addEventListener('click', () => { $('#pasteBox').hidden = true; });
+  $('#pasteApply').addEventListener('click', applyPaste);
+  $('#manualBtn').addEventListener('click', startManual);
+  $('#allLvBtn').addEventListener('click', () => { S.showAll = !S.showAll; renderWx(); });
+  document.addEventListener('click', e => { const b = e.target.closest('.modelbar [data-model]'); if (b) setActive(b.dataset.model); });
+  $('#wxTbl').addEventListener('click', e => {
+    const b = e.target.closest('[data-tog]'); if (!b || !curWx()) return;
+    const p = +b.dataset.tog, ex = curWx().exclude; ex.has(p) ? ex.delete(p) : ex.add(p);
+    saveWx(); recompute(); renderWx();
+  });
+  $('#wxTbl').addEventListener('change', e => {
+    const i = e.target.closest('input[data-p]'); const wx = curWx(); if (!i || !wx) return;
+    const p = +i.dataset.p, v = num(i.value);
+    if (!wx.winds[p]) { const eff = effWinds(wx)[p]; wx.winds[p] = eff ? {dir: eff.dir, spd: eff.spd} : {}; }
+    const w = wx.winds[p]; delete w.raw;
+    if (i.dataset.k === 'dir') w.dir = Number.isFinite(v) ? norm360(Math.round(v)) : NaN; else w.spd = Number.isFinite(v) ? v : NaN;
+    if (!Number.isFinite(w.dir) && !Number.isFinite(w.spd)) delete wx.winds[p];
+    wx.edited = true; saveWx(); recompute(); renderWx();
+  });
+  $('#resBox').addEventListener('click', e => {
+    const c = e.target.closest('[data-copy]'); if (c) return copyText(c.dataset.copy);
+    if (e.target.closest('#copySum')) return copyText(summaryText());
+    if (e.target.closest('#shareSum')) { navigator.share({title: 'Lançamento ' + gdh(S.inp.tUtc, S.inp.tz), text: summaryText()}).catch(() => {}); return; }
+    if (e.target.closest('#kmlBtn')) return exportKml();
+  });
+  $('#kmlBtn2').addEventListener('click', exportKml);
+  $('#satBtn').addEventListener('click', showSat);
+  $('#ovChk').addEventListener('change', () => { S.overlay = $('#ovChk').checked; renderMap(); });
+  for (const b of $$('.seg.modes button')) b.addEventListener('click', () => {
+    S.mapMode = b.dataset.mode; for (const x of $$('.seg.modes button')) x.setAttribute('aria-pressed', String(x === b)); renderMap();
+  });
+  for (const b of $$('.tabs button')) b.addEventListener('click', () => showTab(b.dataset.v));
+  document.addEventListener('visibilitychange', checkNewCycle);
+  setInterval(checkNewCycle, 10 * 60e3);
+}
+
+// ---------- PWA (somente quando hospedado) ----------
+function pwa() {
+  const hosted = /^https?:$/.test(location.protocol) && !/claude|anthropic/i.test(location.hostname);
+  if (!hosted) return;
+  const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest.webmanifest'; document.head.appendChild(l);
+  const ic = document.createElement('link'); ic.rel = 'apple-touch-icon'; ic.href = 'icon-192.png'; document.head.appendChild(ic);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ---------- Início ----------
+fillSelects();
+const saved = store.get(LS_IN);
+const dv = defaults();
+const sv = saved ? {...dv, ...saved} : dv;
+if (saved) { const t0 = utcFromLocal(saved.date, saved.time, saved.tz || 'P'); if (!t0 || t0.getTime() < Date.now() - 6 * 3600e3) { sv.date = dv.date; sv.time = dv.time; } }
+setVals(sv);
+if (!AIRCRAFT.some(a => a.id === $('#ac').value)) $('#ac').value = 'OUTRA';
+if (!PARACHUTES.some(p => p.id === $('#pq').value)) $('#pq').value = 'OUTRO';
+loadWx();
+bind();
+recompute();
+renderWx();
+pwa();
+setTimeout(checkNewCycle, 3000);
+})();
+
+</script>
+
+</body>
+</html>

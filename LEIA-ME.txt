@@ -1,0 +1,36 @@
+LANÇAMENTO CSL — app de cálculo de lançamento HALO/HAHO
+=======================================================
+
+O QUE FAZ
+- Segue o Memento NOAA e as planilhas "Lançamento" (Alunos e Auto) do CSL:
+  seleção automática das camadas (ponto médio, exclusão do vento de solo),
+  D velame aberto = (Δh/Vv)·(Va−W)·0,75, D queda livre = K·V·A,
+  regra dos quadrantes (+360°), dispersão NB·I·Vel, arrasto, margem de segurança,
+  entradas nariz/cauda/boca do cone (arredondadas a 5°) e AZ magnético nav. pqdt.
+- Busca sozinha os ventos dos modelos GFS (NOAA/NCEP) e ECMWF IFS, sempre no ciclo
+  mais recente, para a lat/lon e o horário escolhidos, e avisa quando sai um ciclo novo.
+  Com os dois modelos, o resultado principal é o GFS e o ECMWF aparece em comparação
+  (diferença de direção, distâncias e distância entre os PS de cada modelo).
+- O ECMWF aberto não tem os níveis 975, 950, 900, 800, 750 e 650 mb: o app interpola
+  esses níveis (componentes u/v em ln p) e marca como "int". Dá para desligar em
+  "Parâmetros do método".
+- Calcula a declinação magnética pelo WMM2025 (mesmo modelo da calculadora NOAA).
+- Gera as coordenadas dos PS, o gráfico com as cores padronizadas e o KML para o
+  Google Earth. Também aceita colar o texto do windgram do READY.
+
+COMO COLOCAR NO CELULAR
+A) Recomendado — vira app com ícone e funciona sem internet (exceto a busca de ventos):
+   1. Crie um repositório público no GitHub e envie TODOS os arquivos desta pasta.
+   2. Settings → Pages → Source: "Deploy from a branch" → main / root → Save.
+   3. Abra o endereço https://SEU-USUARIO.github.io/NOME-DO-REPO/ no celular.
+   4. Android (Chrome): menu ⋮ → "Instalar app". iPhone (Safari): Compartilhar → "Adicionar à Tela de Início".
+B) Alternativa: arraste esta pasta em https://app.netlify.com/drop (conta gratuita) e use o link gerado.
+C) Rápido, só Android: copie o index.html para o celular e abra com o Chrome.
+   A busca NOAA funciona; não fica instalado nem funciona offline.
+
+OBSERVAÇÕES
+- Fonte dos ventos: NOAA/NCEP GFS 0,25° e ECMWF IFS 0,25° (dados abertos), pela API aberta Open-Meteo
+  (o READY da NOAA exige código de acesso a cada consulta e não permite automação).
+- Velocidades arredondadas em nós inteiros e direções em graus inteiros, como no windgram.
+- Parâmetros do método (3.500/1.500 ft, fator 0,75, K=3, 700 ft de solo, tabela de margem)
+  ficam em "Parâmetros do método".
